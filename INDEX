@@ -1,0 +1,36 @@
+aggregateFun            ~~function to do ... ~~
+BTest                   Computing B-statistics for Differential
+                        Expression
+chooseTest              Selection of the Most Common Statistics for
+                        Differential Expression
+DEDS-class              DEDS Result List - class
+deds.genExtra           Generating Extra Parameters for Test
+                        Statistics Functions for Differential
+                        Expression
+deds.get.stat           Computing Test Statistics for Differential
+                        Expression
+deds.get.unadjp         Computing permutation based unadjusted p
+                        values for each row of a matrix
+deds.pval               Differential Expression via Distance Summary
+                        of p Values from Multiple Models
+deds.stat2FDR.linkC     Differentail Expression via Distance Summary
+                        of Multiple Statistics
+deds.stat               Differentail Expression via Distance Summary
+                        of Multiple Statistics
+ebayesTest              ~~function to do ... ~~
+FC                      Computing Fold Change for Differential
+                        Expression
+fmodTest                Computing Moderated t-statistics for
+                        Differential Expression
+fTest                   Computing F-statistic for Differential
+                        Expression
+hist-methods            Histogram for DEDS Objects
+pairs-methods           Pairs Plot for DEDS Objects
+qqnorm-methods          Normal Q-Q Plot for DEDS Objects
+Sam                     Computing SAM Statistics for Differential
+                        Expression
+tmodTest                Computing Moderated t-statistics for
+                        Differential Expression
+topgenes                Table of Top Genes from DEDS
+tTest                   Computing One and Two Sample t-statistic for
+                        Differential Expression
