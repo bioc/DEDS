@@ -66,7 +66,7 @@ void order_index(float *V,int *R,int n);
 void order_dist(float *V,int n);
 int indexCompare(const void *v1, const void *v2) ;
 int distCompare(const void *v1, const void *v2) ;
-float select(unsigned long k, unsigned long n, float arr[]);
+float sel(unsigned long k, unsigned long n, float arr[]);
 float median(float *X, int n);
 void quantile(float *X, int nX, float *q, int nq, float *ret);
 float dpowern(float n, int k);

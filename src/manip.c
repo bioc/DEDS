@@ -87,7 +87,7 @@ float median(float *X, int n)
   
   for(i=0;i<total;i++)   sX[i]=X[dX[i]];
  
-  m=select(k, total, sX);
+  m=sel(k, total, sX);
   free(sX);
   free(dX);
   return(m);
@@ -152,7 +152,7 @@ void test_select(float *X, unsigned long *n)
 }
 
 #define SWAP(a,b) temp=(a);(a)=(b);(b)=temp;
-float select(unsigned long k, unsigned long n, float arr[])
+float sel(unsigned long k, unsigned long n, float arr[])
 {
   unsigned long i, ir, j, l, mid;
   float a, temp;
