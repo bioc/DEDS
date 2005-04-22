@@ -1,9 +1,7 @@
 ###########################################################################
 ## Set Class
-require(methods)
-.initDEDS <- function(where) {
-setClass("DEDS", representation("list"), where=where)
-}
+setClass("DEDS", representation("list"))
+
 
 ############################
 ## using p values from different meausres
@@ -263,7 +261,7 @@ comp.adjp <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tai
   res <- .C('get_adjp',as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),
            as.integer(newX$L),t=single(newX$nr), p=single(newX$nr), adjp=single(newX$nr),
             r=integer(newX$nr), as.character(options), as.double(extra),
-            as.integer(newX$nL), as.integer(newX$B), NAOK=TRUE)
+            as.integer(newX$nL), as.integer(newX$B), NAOK=TRUE, PACKAGE="DEDS")
   ret <- as.matrix(cbind(res$r+1,res$t,res$p,res$adjp))
   colnames(ret) <- c("order",test, "unadj.p", "adj.p")
   return(ret)
@@ -279,7 +277,7 @@ comp.fdr <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tail
   res <- .C('get_fdr',as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),
            as.integer(newX$L),t=single(newX$nr), p=single(newX$nr), q=single(newX$nr),
             r=integer(newX$nr), as.character(options), as.double(extra), as.integer(newX$nL),
-            as.integer(newX$B), NAOK=TRUE)
+            as.integer(newX$B), NAOK=TRUE, PACKAGE="DEDS")
   ret <- as.matrix(cbind(res$r+1,res$t,res$p,res$q))
   colnames(ret) <- c("order", test, "unadj.p", "qvalues")
   return(ret)
