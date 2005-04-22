@@ -78,6 +78,313 @@ void get_unadjp(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, c
   delete_sampling();
 }
 
+/********************************************************************************/
+/*  modified from multtest package function adj-by_t                                                          */
+/********************************************************************************/
+/*  
+  L: is the labelling of each experiment
+  T: is that test statistics
+  P: unadjtesed P-values
+  Adj_P:ajusted p-values by using the max|T|
+  To use the function first_sample, and next_sample, they're needed to write into a separate 
+  file, where it provides the create_sampling to do initialization such as allocate the space
+  (before use the sampling) and delete_sampling after we've done the sampling in the main().
+
+  int first_sample(int *L)
+       get the first sample of the labelling.
+  int next_sample(int* L)
+       get the next sample, if it's done all the sampling, then it returns 0, 
+       otherwise it returns 1.
+
+
+  input: d, L, B,options
+  output: R,T,P,Adj_P
+ */
+
+void get_adjp(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, float *Adj_P, int *R, char **options, float *extras, int *nL, int *B)
+{
+  GENE_DATA data;
+  TEST_DATA td;
+  FUNC_COMPUTE_STAT func_test;
+  FUNC_CMP func_cmp;
+  FUNC_SAMPLE func_next_sample;
+  int nT=1; /* handling one test */
+  float *BT, *count1, *count2, QT; /*QT successive maxima*/
+  int b, *bL, is_next, *total1, *total2;
+  int i;
+
+  assert(BT=(float *)malloc(sizeof(float)*(*pnrow)));
+  assert(bL=(int *)malloc(sizeof(int)*(*pncol)));
+  assert(count1=(float*)malloc(sizeof(float)*(*pnrow)));
+  memset(count1,0,sizeof(float)*(*pnrow)); 
+  assert(total1=(int*)malloc(sizeof(int)*(*pnrow)));
+  memset(total1,0,sizeof(int)*(*pnrow));
+  assert(count2=(float*)malloc(sizeof(float)*(*pnrow)));
+  memset(count2,0,sizeof(float)*(*pnrow)); 
+  assert(total2=(int*)malloc(sizeof(int)*(*pnrow)));
+  memset(total2,0,sizeof(int)*(*pnrow));
+
+   /*comuter the original t-statfirst*/
+  create_gene_data(d,pnrow,pncol,L,&data);
+  /*print_gene_data(&data);*/
+  if(type2test(options, &td, &nT, nL, extras)==0) return;
+  func_cmp=td.func_cmp;
+  func_next_sample=td.func_next_sample;
+  func_test=td.stat_array[0];
+
+  (*func_test)(&data, data.L, T, &extras[0]);
+
+  /*sort the T*/  
+  order_data(T,R,*pnrow,func_cmp);
+  sort_gene_data(&data,R);
+  sort_vector(T,R,*pnrow);
+  
+  /*iteration for permutaion*/
+  creat_sampling(*pncol, L, (*B));
+  is_next=func_next_sample(bL);
+  b=0;
+
+  /*changed to the orignal stat, which is monotone of t and centered*/
+  while(is_next){
+     (*func_test)(&data, bL, BT, nL);
+    /*deal with unajdused value first*/
+    for(i=0;i<(*pnrow);i++){
+      if(T[i]==NA_FLOAT) continue;
+      if(BT[i]!=NA_FLOAT){
+	if((func_cmp==cmp_high)&&(BT[i]+EPSILON>=T[i])) count2[i]++;
+	if((func_cmp==cmp_low)&&(BT[i]<=T[i]+EPSILON)) count2[i]++;
+	if((func_cmp==cmp_abs)&&(fabs(BT[i])>=fabs(T[i])-EPSILON)) count2[i]++;
+	total2[i]++;
+      }
+    }
+
+    /*deal with adjusted values*/
+    QT=NA_FLOAT;/*intitalize the QT*/
+    for(i=(*pnrow-1);i>=0;i--){ /*looping the row reversely*/
+      if(T[i]==NA_FLOAT) continue;
+        /* right now I only implements the 3 cases, which are pretty common*/
+      if(func_cmp==cmp_high){
+	if((BT[i]!=NA_FLOAT)&&(QT!=NA_FLOAT)&&(BT[i]>QT))
+	  QT=BT[i];
+	if((BT[i]!=NA_FLOAT)&&(QT==NA_FLOAT))
+	  QT=BT[i];
+	if((QT!=NA_FLOAT)&&(QT>=T[i]-EPSILON)) count1[i]+=1;
+      }else if(func_cmp==cmp_low){
+	if((BT[i]!=NA_FLOAT)&&(QT!=NA_FLOAT)&&(BT[i]<QT))
+	  QT=BT[i];
+	if((BT[i]!=NA_FLOAT)&&(QT==NA_FLOAT))
+	  QT=BT[i];
+	if((QT!=NA_FLOAT)&&(QT<=T[i]+EPSILON)) count1[i]+=1;
+      }else if (func_cmp==cmp_abs) {
+	if((BT[i]!=NA_FLOAT)&&(QT!=NA_FLOAT)&&(fabs(BT[i])>QT))
+	  QT=fabs(BT[i]);
+	if((BT[i]!=NA_FLOAT)&&(QT==NA_FLOAT))
+	  QT=fabs(BT[i]);
+	if((QT!=NA_FLOAT)&&(QT>=fabs(T[i])-EPSILON)) count1[i]+=1;
+      }	      
+      if(QT!=NA_FLOAT) total1[i]++;
+    }
+    b++;
+    print_b(b,*B,"b=");
+    is_next=func_next_sample(bL);
+  }
+
+  /*summarize the results*/
+  /*unadjusted one*/
+  for(i=0;i<(*pnrow);i++){ 
+    if(total2[i]==0) 
+      P[i]=NA_FLOAT;
+    else P[i]=count2[i]*1.0/total2[i];
+  }
+  /*adjused one*/
+  for(i=0;i<(*pnrow);i++){ 
+    if(total1[i]==0) 
+      Adj_P[i]=NA_FLOAT;
+    else Adj_P[i]=count1[i]*1.0/total1[i];
+  }
+  /*enforce the montonicity*/
+  for(i=1;i<(*pnrow);i++)
+    if(Adj_P[i]<Adj_P[i-1])
+      Adj_P[i]=Adj_P[i-1];
+
+  /*free the spaces*/
+  free(BT);
+  free(count1);
+  free(total1);
+  free(count2);
+  free(total2);
+  free(bL);
+}      
+
+
+void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, float *FDR, int *R, char **options, float *extras, int *nL, int *B)
+{
+  GENE_DATA data;
+  TEST_DATA td;
+  FUNC_COMPUTE_STAT func_test;
+  FUNC_CMP func_cmp;
+  FUNC_SAMPLE func_next_sample;
+  int nT=1; /* handling one test */
+  float **BT, *junk, pi0, q1, q2; 
+  int b, *bL, is_next, *R1, *total2, total1=0, *count1, *count2;
+  int i,j;
+  int total, topn;
+
+  assert(BT=(float **)malloc(sizeof(float *)*(*B)));
+  for (i=0;i<(*B);i++) {
+    assert(BT[i]=(float *)malloc(sizeof(float)*(*pnrow)));
+  }
+  assert(bL=(int *)malloc(sizeof(int)*(*pncol)));
+  assert(count1=(int*)malloc(sizeof(int)*(*pnrow)));
+  memset(count1,0,sizeof(int)*(*pnrow)); 
+  assert(total2=(int*)malloc(sizeof(int)*(*pnrow)));
+  memset(total2,0,sizeof(int)*(*pnrow));
+  assert(count2=(int*)malloc(sizeof(int)*(*pnrow)));
+  memset(count2,0,sizeof(int)*(*pnrow)); 
+  
+   /*compute the original t-statfirst*/
+  create_gene_data(d,pnrow,pncol,L,&data);
+  /*print_gene_data(&data);*/
+  if(type2test(options, &td, &nT, nL, extras)==0) return;
+  func_cmp=td.func_cmp;
+  func_next_sample=td.func_next_sample;
+  func_test=td.stat_array[0];
+
+  (*func_test)(&data, data.L, T, &extras[0]);
+
+  /*sort the T*/  
+  order_data(T,R,*pnrow,func_cmp);
+  sort_gene_data(&data,R);
+  sort_vector(T,R,*pnrow);
+  
+  /*iteration for permutaion*/
+  creat_sampling(*pncol, L, (*B));
+  is_next=func_next_sample(bL);
+  b=0;
+  total=(*pnrow)*(*B);
+
+  /*changed to the orignal stat, which is monotone of t and centered*/
+  while(is_next){
+    (*func_test)(&data, bL, BT[b], nL);
+    /*deal with unajdusted value first*/
+      for(i=0;i<(*pnrow);i++){
+      if(T[i]==NA_FLOAT) continue;
+      if(BT[b][i]!=NA_FLOAT){
+	if((func_cmp==cmp_high)&&(BT[b][i]+EPSILON>=T[i])) count2[i]++;
+	if((func_cmp==cmp_low)&&(BT[b][i]<=T[i]+EPSILON)) count2[i]++;
+	if((func_cmp==cmp_abs)&&(fabs(BT[b][i])>=fabs(T[i])-EPSILON)) count2[i]++;
+	total2[i]++;
+      }
+    }
+    b++;
+    print_b(b,*B,"b=");
+    is_next=func_next_sample(bL);
+  }
+
+  assert(junk=(float*)malloc(sizeof(float)*total));
+  assert(R1=(int*)malloc(sizeof(int)*total));
+  for (i=0;i<(*B);i++){
+    for (j=0;j<(*pnrow);j++){
+      junk[i*(*pnrow)+j]=BT[i][j];
+    }
+  }
+   
+  q1=T[(int)floor(0.25*(*pnrow))];
+  q2=T[(int)floor(0.75*(*pnrow))];
+  for (i=0;i<total;i++) {
+    if((func_cmp==cmp_high) && (junk[i]<q1) && (junk[i]>q2)) total1++;
+    if((func_cmp==cmp_low) && (junk[i]>q1) && (junk[i]<q2)) total1++;
+    if((func_cmp==cmp_abs) && (fabs(junk[i])<fabs(q1)) && (fabs(junk[i])>fabs(q2))) total1++;
+  }
+  pi0=total1*1.0/(*B)/(0.5*(*pnrow));
+  if(pi0>1) pi0=1;
+  Rprintf("\nestimated percentage of null genes is: pi0==%5.3f\n", pi0);
+  
+  if(total<LEN_LIMIT){
+    order_data(junk,R1,total,func_cmp);
+    sort_vector(junk,R1,total);
+	 
+    /*deal with fdr*/
+    for(i=0;i<(*pnrow);i++){
+      if(T[i]==NA_FLOAT) continue;
+      for(j=0;j<total;j++) {
+	if(junk[j]==NA_FLOAT) continue;
+	if((func_cmp==cmp_high) && (junk[j]<T[i])) {
+	  count1[i]=j;
+	  break;
+	}
+	if((func_cmp==cmp_low) && (junk[j]>T[i])) {
+	  count1[i]=j;
+	  break;
+	}
+	if((func_cmp==cmp_abs) && (fabs(junk[j])<fabs(T[i]))) {
+	  count1[i]=j;
+	  break;
+	}
+      }
+      if(count1[i]>(int)ceil((i+1)*(*B)/pi0)) {
+	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*B)/pi0);
+	break;
+      }
+    }
+  }
+  else {
+    if(pi0<0.95) {
+      topn = (int)ceil((double)(*pnrow)*(1-pi0*1.0));
+      Rprintf("\ntopn=%d",topn);
+       Rprintf("\nSample size too big....We calculate q values for the top %5.3f percent (%d) genes \nand the rest will be equaled to 1\n", 1-pi0, topn);
+    }
+    else {
+      topn = (int)ceil(((double)(*pnrow))*0.05);
+      Rprintf("\ntopn=%d",topn);
+      Rprintf("\nSample size too big....We calculate q values for the top 5 percent (%d) genes and the rest will be equaled to 1\n", topn);
+    }
+   
+    for (i=0;i<topn;i++) {
+      count1[i]=0;
+      for(j=0;j<total;j++) {
+	if(junk[j]==NA_FLOAT) continue;
+	if((func_cmp==cmp_high) && (junk[j]>=T[i]))  count1[i]++;
+	if((func_cmp==cmp_low) && (junk[j]<=T[i]))  count1[i]++;
+	if((func_cmp==cmp_abs) && (fabs(junk[j])>=fabs(T[i]))) count1[i]++;
+      }
+      print_b(i+1,topn,"");
+      if(count1[i]>(int)ceil((i+1)*(*B)/pi0)){
+	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*B)/pi0);
+	break;
+      }
+    }
+    for (i=topn;i<(*pnrow);i++) count1[i]=(int)ceil((i+1)*(*B)/pi0);
+  }
+    
+  /*summarize the results*/
+  /*unadjusted one*/
+  for(i=0;i<(*pnrow);i++){ 
+    if(total2[i]==0) 
+      P[i]=NA_FLOAT;
+    else P[i]=count2[i]*1.0/total2[i];
+  }
+  for(i=0;i<(*pnrow);i++)
+    FDR[i]=pi0*(count1[i]*1.0)/(*B)/(i+1);
+  
+  for(i=1;i<(*pnrow);i++){
+    if(FDR[i]<FDR[i-1])
+      FDR[i]=FDR[i-1];
+  }
+
+  for(i=0;i<(*pnrow);i++) 
+    if(FDR[i]>1) FDR[i]=1;
+
+  /*free the spaces*/
+  free(BT);
+  free(count1);
+  free(total2);
+  free(count2);
+  free(junk);
+  free(bL);
+}      
+
+
 /*******************************************************************/
 /**                    t stats                                    **/
 /*******************************************************************/

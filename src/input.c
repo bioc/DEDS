@@ -73,11 +73,10 @@ void print_gene_data(GENE_DATA *pdata)
   }
 }
 
-void create_deds_res(int *pnrow, int *pnsig, int *pnT, DEDS_RES *pdr)
+void create_deds_res(int *pnrow, int *pnT, DEDS_RES *pdr)
 {
   int i;
   pdr->nrow=*pnrow;
-  pdr->nsig=*pnsig;
   pdr->nT=*pnT;
 
   assert(pdr->R=(int *)malloc(sizeof(int)*(*pnrow)));
@@ -123,3 +122,46 @@ void free_tmod_data(TMOD_DATA *ptmod)
   free(ptmod->stdev_unscale);
 }
  
+/********************************************************************************/
+/*                    sort_gene_data                                            */
+/********************************************************************************/
+/* Description:
+   sort the rows of gene_data such that row R[i] of is the first row, i=0,...,m-1,
+   wher R[0],...,R[m-1] is a permutation of (0,...,m-1)
+*/
+										 
+void sort_gene_data(GENE_DATA* pdata,int*R)
+{
+  int i,nrow=pdata->nrow;
+  float** old_d;  /*th old addresses of the gene data*/
+  assert(old_d=(float**)malloc(sizeof(float*)*nrow));
+  /*store the original pointers from pdata*/ 
+  for(i=0;i<nrow;i++)
+    {
+      old_d[i]=pdata->d[i];
+    }
+  /*rearrange the data so that it's ordered according to R*/
+  for(i=0;i<nrow;i++)
+    {
+      pdata->d[i]=old_d[R[i]];
+    }
+  free(old_d);
+}
+/********************************************************************************/
+/*                    sort_vector                                               */
+/********************************************************************************/
+/* Desciption
+      sort the vector V according to the order R with n elemnets
+      where R[0],...,R[n-1] is a permutation of 0,...n-1
+*/
+void sort_vector(float* V,int*R,int n)
+{
+  float* old_V;
+  int i;
+  assert(old_V=(float*)malloc(sizeof(float)*n));
+  for(i=0;i<n;i++)
+    old_V[i]=V[i];
+  for(i=0;i<n;i++)
+    V[i]=old_V[R[i]];
+  free(old_V);
+}

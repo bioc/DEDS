@@ -11,7 +11,7 @@
 \usepackage{amsmath,epsfig,fullpage}%,psfig,pstricks
 \usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
-%\usepackage{C:/PROGRA~1/R/rw1091/share/texmf/Sweave}
+%\usepackage{C:/PROGRA~1/R/rw2001/share/texmf/Sweave}
 \usepackage{Sweave}
 
 \parindent 0in
@@ -191,15 +191,10 @@ for efficiency purpose. We describe the most important arguments in the function
     adjustment; choices include \code{``fdr''} for returning $q$ values controling False 
     Discovery Rate (FDR; see \cite{Benjamini&Hochberg95}) and \code{``adjp''}
     for adjusted $p$ values (see \cite{Dudoit&Shaffer02}) controling family wise type I error rate.} 
- \item{\code{nsig}: }{ If \code{adj = ``fdr''}, \code{nsig} specifies the number of top
-    differentially expressed genes whose $q$ values will be calculated; we recommend 
-    setting \code{nsig < N}, as the computation of $q$ values will be extensive. $q$ values
-    for the rest of genes will be approximated to 1. If \code{adj = ``adjp''}, the 
-    calculation of the adjusted $p$ values will be for the whole dataset.}
-\end{description}
+ \end{description}
 
 We apply \Rfunc{deds.stat.linkC} on the \code{affySpikeIn} dataset using
-400 permutations and evaluating the $q$ values for the top 100 genes. Here, 
+400 permutations and computing associated $q$ values for each gene. Here, 
 as a default, DEDS synthesizes $t$ statistics,$FC$ and SAM. The information 
 of the top 20 genes can be printed out using the function \code{topgenes};
 note that the rankings of genes by DEDS balance among the three measures it 
@@ -208,8 +203,7 @@ synthesizes, $t$ statistics, $FC$ and SAM.
 % start code -----------------------------------------
 \begin{Schunk}
 \begin{Sinput}
-> deds.affy <- deds.stat.linkC(affySpikeIn, affySpikeIn.L, B = 400, 
-+     nsig = 100)
+> deds.affy <- deds.stat.linkC(affySpikeIn, affySpikeIn.L, B = 400)
 \end{Sinput}
 \end{Schunk}
 
@@ -220,25 +214,25 @@ synthesizes, $t$ statistics, $FC$ and SAM.
 \begin{Soutput}
                    Name geneOrder       DEDS          t         fc       sam
 1                684_at     12244 0.00000000 171.858505  7.2235484 82.349174
-2              36085_at      6134 0.00000000 -19.250088 -0.7648563 -8.954151
-3              36202_at      6253 0.00000000 -15.757862 -0.8603835 -8.579226
-4              33818_at      3845 0.00000000 -16.560453 -0.6846256 -7.866767
-5               1091_at       102 0.00000000 -19.858982 -0.4745293 -6.819760
-6              36311_at      6363 0.00000000 -14.013592 -0.6919303 -7.278708
-7                546_at     12106 0.00000000 -10.181562 -0.8456221 -6.568406
-8               1024_at        28 0.00000000 -11.241182 -0.6650023 -6.342763
-9              40322_at     10414 0.00000000 -12.258781 -0.5484858 -6.065384
-10             38734_at      8810 0.00000000 -10.129580 -0.5154920 -5.337663
-11             32660_at      2675 0.00000000 -13.974358 -0.3281164 -4.743865
-12            1552_i_at       609 0.00000000  -6.499473 -0.6759853 -4.515819
-13             36889_at      6946 0.00000000  -8.767056 -0.5016880 -4.874979
-14             38254_at      8325 0.03703704   8.293945  0.3783841  4.144027
-15             37777_at      7843 0.03703704  -8.696619 -0.2633858 -3.466853
-16             39058_at      9137 0.03703704  -7.176070 -0.2977104 -3.415163
-17              1032_at        37 0.03703704   4.684491  0.4109406  3.080278
-18 AFFX-YEL021w/URA3_at     12625 0.03703704  -2.130391 -0.6669140 -1.859075
-19              1708_at       780 0.03703704  -5.415472 -0.3216362 -3.060909
-20               407_at     10795 0.03703704  -6.421535 -0.2044849 -2.637487
+2              36085_at      6134 0.01685367 -19.250088 -0.7648563 -8.954151
+3              36202_at      6253 0.01685367 -15.757862 -0.8603835 -8.579226
+4              33818_at      3845 0.03731885 -16.560453 -0.6846256 -7.866767
+5               1091_at       102 0.04430109 -19.858982 -0.4745293 -6.819760
+6              36311_at      6363 0.04430109 -14.013592 -0.6919303 -7.278708
+7                546_at     12106 0.04430109 -10.181562 -0.8456221 -6.568406
+8               1024_at        28 0.04430109 -11.241182 -0.6650023 -6.342763
+9              40322_at     10414 0.04430109 -12.258781 -0.5484858 -6.065384
+10             38734_at      8810 0.04430109 -10.129580 -0.5154920 -5.337663
+11             32660_at      2675 0.04430109 -13.974358 -0.3281164 -4.743865
+12            1552_i_at       609 0.04430109  -6.499473 -0.6759853 -4.515819
+13             36889_at      6946 0.04430109  -8.767056 -0.5016880 -4.874979
+14             38254_at      8325 0.04430109   8.293945  0.3783841  4.144027
+15             37777_at      7843 0.04430109  -8.696619 -0.2633858 -3.466853
+16             39058_at      9137 0.04430109  -7.176070 -0.2977104 -3.415163
+17              1032_at        37 0.04430109   4.684491  0.4109406  3.080278
+18 AFFX-YEL021w/URA3_at     12625 0.04430109  -2.130391 -0.6669140 -1.859075
+19              1708_at       780 0.04430109  -5.415472 -0.3216362 -3.060909
+20               407_at     10795 0.04430109  -6.421535 -0.2044849 -2.637487
 \end{Soutput}
 \end{Schunk}
 % end code -----------------------------------------
@@ -456,6 +450,68 @@ has to be applied instead.
 \end{Sinput}
 \end{Schunk}
 
+\subsection{Computing adjusted p values and q values for associated statistics}
+Two functions \Rfunc{comp.adjp} and \Rfunc{comp.fdr} are provided to calculate 
+adjusted p values (controling FWER) and q values (controling FDR) respectively. 
+The function \Rfunc{comp.adjp} computes permuation based step-down maxT adjusted p values for a
+selected test statistic, e.g., one- or two-sample   t-statitics, F-statistics, SAM, 
+Fold change, moderated t-statistics and moderated F-statisitcs, for each gene. The 
+procedure is based on codes from the function \code{mt.maxT} in the Bioconductor 
+package \code{multtest} and described in \cite{Westfall&Young93}. The function
+\Rfunc{comp.fdr} computes permuation based q values for the same spectrum of statistics.
+The following codes provide examples showcasing the usage of these two functions.
+
+\begin{Schunk}
+\begin{Sinput}
+> adjp.affy <- comp.adjp(affySpikeIn, affySpikeIn.L, B = 500, test = "t")
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> adjp.affy[1:10, ]
+\end{Sinput}
+\begin{Soutput}
+      order         t unadj.p adj.p
+ [1,] 12244 171.85851       0     0
+ [2,]   102 -19.85898       0     0
+ [3,]  6134 -19.25009       0     0
+ [4,]  3845 -16.56045       0     0
+ [5,]  6253 -15.75786       0     0
+ [6,]  6363 -14.01359       0     0
+ [7,]  2675 -13.97436       0     0
+ [8,] 10414 -12.25878       0     0
+ [9,]    28 -11.24118       0     0
+[10,] 12106 -10.18156       0     0
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> fdr.affy <- comp.fdr(affySpikeIn, affySpikeIn.L, B = 500, test = "t")
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> fdr.affy[1:10, ]
+\end{Sinput}
+\begin{Soutput}
+      order         t unadj.p qvalues
+ [1,] 12244 171.85851       0       0
+ [2,]   102 -19.85898       0       0
+ [3,]  6134 -19.25009       0       0
+ [4,]  3845 -16.56045       0       0
+ [5,]  6253 -15.75786       0       0
+ [6,]  6363 -14.01359       0       0
+ [7,]  2675 -13.97436       0       0
+ [8,] 10414 -12.25878       0       0
+ [9,]    28 -11.24118       0       0
+[10,] 12106 -10.18156       0       0
+\end{Soutput}
+\end{Schunk}
+
+
 
 \begin{thebibliography}{}
 
@@ -504,6 +560,11 @@ Yang, Y.~H., Xiao, Y., and Segal, M. (2004).
   statistic synthesis.
 \newblock {\em Manuscript in preparation.}
 
+\bibitem[Westfall and Young, 1993]{Westfall&Young93}
+Westfall, P.~H. and Young, S.~S. (1993).
+\newblock {\em Resampling-based multiple testing: {E}xamples and methods for
+  $p$-value adjustment}.
+\newblock John Wiley \& Sons.
 \end{thebibliography}
 
 

@@ -27,7 +27,7 @@ void get_deds_order(double *d, int *pnrow, int *pncol, int *L, char **options, f
 
   create_gene_data(d,pnrow,pncol,L,&data);
   if(type2test(options, &td, nT, nL, extras)==0) return;
-  create_deds_res(pnrow, pncol, nT, &dr);
+  create_deds_res(pnrow, nT, &dr);
 
   func_get_order(&data, &td, &dr, B);
   extract_deds_res(&dr, E, R, F, T);
@@ -48,12 +48,11 @@ void get_deds_order(double *d, int *pnrow, int *pncol, int *L, char **options, f
 /**                  intermediate results, but it is slower. As a fixed seed             **/
 /**                  random number generator is used, results are same for both          **/
 /**                  quick or slow.                                                      **/
-/**         pnsig -- number of significant genes to be outputed                          **/
 /**         FDR -- basically Q values for significant genes assuming all hypotheses null **/
 /******************************************************************************************/
 
 void get_deds_FDR(double *d, int *pnrow, int *pncol, int *L, char **options, float *extras, int *quick, 
-		   int *nL, int *nT, int *B, int *pnsig, double *E, int *R, double *FDR, double *T)
+		   int *nL, int *nT, int *B, double *E, int *R, double *FDR, double *T)
 {
   GENE_DATA data;
   TEST_DATA td;
@@ -61,7 +60,7 @@ void get_deds_FDR(double *d, int *pnrow, int *pncol, int *L, char **options, flo
           
   create_gene_data(d,pnrow,pncol,L,&data);
   if(type2test(options, &td, nT, nL, extras)==0) return;
-  create_deds_res(pnrow, pnsig, nT, &dr);
+  create_deds_res(pnrow, nT, &dr);
    
   if (*quick) func_deds_quick(&data, &td, &dr, B);
   else {
@@ -86,7 +85,6 @@ void func_deds_quick(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   int ncol=pdata->ncol;
   int nrow=pdata->nrow;
   int nT=pdr->nT;
-  int nsig=pdr->nsig;
   int weighted_dist=ptd->weighted_dist;
   FUNC_COMPUTE_STAT func_compute_stat;
   FUNC_COMPUTE_P func_compute_p=ptd->func_compute_p;
@@ -177,7 +175,7 @@ void func_deds_quick(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   compute_euclid(T, nrow, nT, E, pdr->wval, pdr->D); 
   
   order_index(pdr->D, pdr->R, nrow);      
-  Rprintf("\nSummarizing DEDS results for %d permutations and %d genes, please wait... \n", (*B), nsig);
+  Rprintf("\nSummarizing DEDS results for %d permutations and %d genes, please wait... \n", (*B), nrow);
 	 
   
   for (b=0;b<(*B);b++) {
@@ -187,7 +185,7 @@ void func_deds_quick(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
       bMD[b*nrow+i]=bD[i];
   }
   
-  (*func_compute_p)(bMD, pdr->D, pdr->R, &nrow, B, &nsig, fF);
+  (*func_compute_p)(bMD, pdr->D, pdr->R, &nrow, B, fF);
 
   for(i=0;i<nrow;i++) pdr->FDR[i]=(double)fF[i];
 			    
@@ -322,7 +320,6 @@ void func_get_FDR(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   int ncol=pdata->ncol; /* number of samples */
   int nrow=pdata->nrow; /* number of genes */
   int nT=ptd->n_stat; /* number of statistics, t, fc, etc */
-  int nsig=pdr->nsig;
   FUNC_COMPUTE_STAT func_compute_stat;
   FUNC_MAX func_max=ptd->func_max;
   FUNC_SAMPLE func_next_sample=ptd->func_next_sample;
@@ -364,7 +361,7 @@ void func_get_FDR(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
     is_next=(*func_next_sample)(bL);
     }
  
-  (*func_compute_p)(bMD, pdr->D, pdr->R, &nrow, B, &nsig, fF);
+  (*func_compute_p)(bMD, pdr->D, pdr->R, &nrow, B, fF);
   for(i=0;i<nrow;i++) pdr->FDR[i]=(double)fF[i];
     
   free(tmpT);
@@ -410,12 +407,18 @@ int type2test(char **options, TEST_DATA *td, int *nT, int *nL, float *extras)
   /*Rprintf("\n");*/
   
   td->n_stat=*nT;
-  if(strcmp(options[*nT],"abs")==0)
+  if(strcmp(options[*nT],"abs")==0){
     td->func_max=max_abs;
-  else if(strcmp(options[*nT],"lower")==0)
+    td->func_cmp=cmp_abs;
+  }
+  else if(strcmp(options[*nT],"lower")==0){
     td->func_max=max_low;
-  else if(strcmp(options[*nT],"higher")==0)
+    td->func_cmp=cmp_low;
+  }
+  else if(strcmp(options[*nT],"higher")==0){
     td->func_max=max_high;  
+    td->func_cmp=cmp_high;
+  }
   else 
     return 0;
   
@@ -497,66 +500,92 @@ FUNC_COMPUTE_STAT type2stat(char *ptest, int *nL)
 
 /** bD -- distance matrix, ncol--no of permutation , nrow--no of genes **/
 /** R -- order of D */
-void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, float *F)
+void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, float *F)
 {
-  float **bMD, **count;
-  int i, j, m;
+  float *old_d, q1, q2, pi0;
+  int i, j, total=(*pnrow)*(*pncol), total1=0, *count1, topn=0;
     
-  assert(bMD=(float **)malloc(sizeof(float *)*(*pnrow)));
+  assert(count1=(int *)malloc(sizeof(int)*(*pnrow)));
+  assert(old_d=(float*)malloc(sizeof(float)*(*pnrow)));
+
+  /*sort D*/ 
   for(i=0;i<(*pnrow);i++)
-    assert(bMD[i]=(float *)malloc(sizeof(float)*(*pncol)));
-  assert(count=(float **)malloc(sizeof(float *)*(*nsig)));
-  for(i=0;i<(*nsig);i++){
-    assert(count[i]=(float *)malloc(sizeof(float)*(*pncol)));
-    memset(count[i], 0, sizeof(float)*(*pncol));
+    old_d[i]=D[i];
+  /*rearrange the data so that it's ordered according to R*/
+  for(i=0;i<(*pnrow);i++)
+    D[i]=old_d[R[i]];
+ 
+  q1=D[(int)floor(0.25*(*pnrow))];
+  q2=D[(int)floor(0.75*(*pnrow))];
+  for (i=0;i<total;i++) {
+     if((bD[i]>q1) && (bD[i]<q2)) total1++;
   }
+  pi0=total1*1.0/(*pncol)/(0.5*(*pnrow));
+  if(pi0>1) pi0=1;
+  Rprintf("\nestimated percentage of null genes is: pi0=%5.3f\n", pi0);
+    
+  /* if dimension (length(bD)) not too big <1e7, we calculate q value for every gene */
+  /* if dimension too big, sorting bD becomes a problem, we calculate only q values for */
+  /* the top pi0 percentile genes */  
+  
+  if(total<LEN_LIMIT){
+    qsort(bD, total, sizeof(bD[0]), distCompare);
 
-  for(i=0;i<(*pnrow);i++){
-    for(j=0;j<(*pncol);j++){
-      bMD[i][j]=bD[j*(*pnrow)+i];
+    for(i=0;i<(*pnrow);i++){
+      if(D[i]==NA_FLOAT) continue;
+      for(j=0;j<total;j++) {
+	if(bD[j]>D[i]) {
+	  count1[i]=j;
+	  break;
+	}
+      }
+      if(count1[i]>(int)ceil((i+1)*(*pncol)/pi0)) {
+	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*pncol)/pi0);
+	break;
+      }
     }
   }
-
-  for(i=0;i<(*pncol);i++) {
-    for(j=0;j<(*nsig);j++) { 
-      int k=0;
-      for(m=0;m<(*pnrow);m++) 
-	if(bMD[m][i]<=D[R[j]]) k++;
-      count[j][i]=(float)k;    
+  else {
+    if(pi0<0.95) {
+      topn = (int)ceil((double)(*pnrow)*(1-pi0*1.0));
+      Rprintf("\ntopn=%d",topn);
+       Rprintf("\nSample size too big....We calculate q values for the top %5.3f percent (%d) genes \nand the rest will be equaled to 1\n", 1-pi0, topn);
     }
+    else {
+      topn = (int)ceil(((double)(*pnrow))*0.05);
+      Rprintf("\ntopn=%d",topn);
+      Rprintf("\nSample size too big....We calculate q values for the top 5 percent (%d) genes and the rest will be equaled to 1\n", topn);
+    }
+   
+    for (i=0;i<topn;i++) {
+      count1[i]=0;
+      for(j=0;j<total;j++) {
+	if(bD[j]<=D[i]) count1[i]++;
+      }
+      print_b(i+1,topn,"");
+      if(count1[i]>(int)ceil((i+1)*(*pncol)/pi0)){
+	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*pncol)/pi0);
+	break;
+      }
+    }
+    for (i=topn;i<(*pnrow);i++) count1[i]=(int)ceil((i+1)*(*pncol)/pi0);
   }
   
-  for(i=0;i<(*nsig);i++){
-    if(!R_FINITE(D[i])) F[i]=NA_REAL;
-    else
-      F[i]=median(count[i], (*pncol))/(float)(i+1);
-      }
+  for(i=0;i<(*pnrow);i++)
+    F[i]=pi0*(count1[i]*1.0)/(*pncol)/(i+1);
+  
+  for(i=1;i<(*pnrow);i++){
+    if(F[i]<F[i-1])
+      F[i]=F[i-1];
+  }
 
-  /*for (i=0;i<(*nsig);i++) {
-    if(!R_FINITE(D[i])) F[i]=NA_REAL;
-    else {
-      float m=0;
-      for (j=0;j<(*pncol);j++)
-	m+=count[i][j];
-      F[i]=m/(float)(*pncol)/(float)(i+1);
-    }
-    }*/
-
-  /* for(i=1;i<(*nsig);i++)
-     if(F[i]<F[i-1]) F[i]=F[i-1];*/
-  for(i=(*nsig-1);i>0;i--)
-    if(F[i-1]>F[i]) F[i-1]=F[i];
-  for(i=0;i<(*nsig);i++)
-     if(F[i]>1.0) F[i]=1.0;
-  for(i=(*nsig);i<(*pnrow);i++) F[i]=1.0;
-
- 
   for(i=0;i<(*pnrow);i++) 
-      free(bMD[i]);
-  free(bMD);
-  for(i=0;i<(*nsig);i++) 
-   free(count[i]);
-  free(count);
+  if(F[i]>1) F[i]=1;
+
+  free(count1);
+  free(bD);
+  free(D);
+  free(old_d);
 }
 
 /*************************************************************************************/
@@ -564,7 +593,7 @@ void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, fl
 /* bD -- dimension nGXB                                                             **/
 /* R -- gene order                                                                  **/
 /*************************************************************************************/
-void calc_adjP(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, float *F)
+void calc_adjP(float *bD, float *D, int *R, int *pnrow, int *pncol, float *F)
 {
   float **bMD, *Adj_P;
   int i, j, *count, *total;

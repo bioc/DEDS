@@ -8,7 +8,7 @@
   expression (DE) to rank and select a set of DE genes.
 }
 \usage{
-deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200, nsig = nrow(X))
+deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200)
 }
 
 \arguments{
@@ -26,8 +26,6 @@ deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200, nsig = nrow(X
   \item{B}{The number of permutations. For a complete enumeration,
       \code{B} should be 0 (zero) or any number not less than the total
       number of permutations.}
-  \item{nsig}{A numeric variable specifying the number of top genes that
-    will be returned.}
 }
 \details{
   \code{deds.pval} summarizes \eqn{p} values from multiple statistical models
@@ -52,10 +50,9 @@ deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200, nsig = nrow(X
   Statistics,  Stanford University,
   http://www-stat.stanford.edu/~tibs/ftp/gap.ps
 
-  Yang, Y. H., Xiao, Y. and Segal MR: Selecting differentially expressed
+  Yang, Y.H., Xiao, Y. and Segal M.R.: Selecting differentially expressed
   genes from microarray experiment by sets of
-  statistics. \emph{Bioinformatics},
-  2004, accepted. http://www.biostat.ucsf.edu/jean/Papers/DEDS.pdf.
+  statistics. \emph{Bioinformatics} 2005 21:1084-1093.
 }
 
 \author{Yuanyuan Xiao, \email{yxiao@itsa.ucsf.edu}, \cr

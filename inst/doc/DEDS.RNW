@@ -11,7 +11,7 @@
 \usepackage{amsmath,epsfig,fullpage}%,psfig,pstricks
 \usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
-%\usepackage{C:/PROGRA~1/R/rw1091/share/texmf/Sweave}
+%\usepackage{C:/PROGRA~1/R/rw2001/share/texmf/Sweave}
 %\usepackage{Sweave}
 
 \parindent 0in
@@ -171,15 +171,10 @@ for efficiency purpose. We describe the most important arguments in the function
     adjustment; choices include \code{``fdr''} for returning $q$ values controling False 
     Discovery Rate (FDR; see \cite{Benjamini&Hochberg95}) and \code{``adjp''}
     for adjusted $p$ values (see \cite{Dudoit&Shaffer02}) controling family wise type I error rate.} 
- \item{\code{nsig}: }{ If \code{adj = ``fdr''}, \code{nsig} specifies the number of top
-    differentially expressed genes whose $q$ values will be calculated; we recommend 
-    setting \code{nsig < N}, as the computation of $q$ values will be extensive. $q$ values
-    for the rest of genes will be approximated to 1. If \code{adj = ``adjp''}, the 
-    calculation of the adjusted $p$ values will be for the whole dataset.}
-\end{description}
+ \end{description}
 
 We apply \Rfunc{deds.stat.linkC} on the \code{affySpikeIn} dataset using
-400 permutations and evaluating the $q$ values for the top 100 genes. Here, 
+400 permutations and computing associated $q$ values for each gene. Here, 
 as a default, DEDS synthesizes $t$ statistics,$FC$ and SAM. The information 
 of the top 20 genes can be printed out using the function \code{topgenes};
 note that the rankings of genes by DEDS balance among the three measures it 
@@ -187,7 +182,7 @@ synthesizes, $t$ statistics, $FC$ and SAM.
 
 % start code -----------------------------------------
 <<dedsaffy,eval=TRUE,echo=TRUE, results=hide>>= 
-deds.affy <- deds.stat.linkC(affySpikeIn, affySpikeIn.L, B=400, nsig=100) 
+deds.affy <- deds.stat.linkC(affySpikeIn, affySpikeIn.L, B=400) 
 @
 
 <<showdedsaffy,eval=TRUE,echo=TRUE>>=
@@ -360,6 +355,34 @@ has to be applied instead.
 t.affy <- comp.stat(affySpikeIn, affySpikeIn.L, test='t')
 @
 
+\subsection{Computing adjusted p values and q values for associated statistics}
+Two functions \Rfunc{comp.adjp} and \Rfunc{comp.fdr} are provided to calculate 
+adjusted p values (controling FWER) and q values (controling FDR) respectively. 
+The function \Rfunc{comp.adjp} computes permuation based step-down maxT adjusted p values for a
+selected test statistic, e.g., one- or two-sample   t-statitics, F-statistics, SAM, 
+Fold change, moderated t-statistics and moderated F-statisitcs, for each gene. The 
+procedure is based on codes from the function \code{mt.maxT} in the Bioconductor 
+package \code{multtest} and described in \cite{Westfall&Young93}. The function
+\Rfunc{comp.fdr} computes permuation based q values for the same spectrum of statistics.
+The following codes provide examples showcasing the usage of these two functions.
+
+<<adjp,echo=TRUE,eval=TRUE,results=hide>>=
+adjp.affy <- comp.adjp(affySpikeIn, affySpikeIn.L, B=500, test="t")
+@
+
+<<adjpres,echo=TRUE,eval=TRUE>>=
+adjp.affy[1:10,]
+@
+
+<<fdr,echo=TRUE,eval=TRUE,results=hide>>=
+fdr.affy <- comp.fdr(affySpikeIn, affySpikeIn.L, B=500, test="t")
+@
+
+<<fdrres,echo=TRUE,eval=TRUE>>=
+fdr.affy[1:10,]
+@
+
+
 
 \begin{thebibliography}{}
 
@@ -408,6 +431,11 @@ Yang, Y.~H., Xiao, Y., and Segal, M. (2004).
   statistic synthesis.
 \newblock {\em Manuscript in preparation.}
 
+\bibitem[Westfall and Young, 1993]{Westfall&Young93}
+Westfall, P.~H. and Young, S.~S. (1993).
+\newblock {\em Resampling-based multiple testing: {E}xamples and methods for
+  $p$-value adjustment}.
+\newblock John Wiley \& Sons.
 \end{thebibliography}
 
 

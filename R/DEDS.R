@@ -10,7 +10,7 @@ setClass("DEDS", representation("list"), where=where)
 ## X -- matrix of p values from different measures
 
 deds.pval <- function(X, E=rep(0,ncol(X)), adj=c("fdr", "adjp"),
-                          B=200, nsig=nrow(X)) {
+                          B=200) {
   ## draws unifom distribution along the columns of X
   genUniform <- function(X) { 
     X <- as.matrix(X)
@@ -34,24 +34,23 @@ deds.pval <- function(X, E=rep(0,ncol(X)), adj=c("fdr", "adjp"),
 
   adj <- match.arg(adj)
   p <- switch(adj,
-         fdr=deds.calcFDR(bD=bD[,-1], D=bD[,1], R=geneOrder-1, nsig),
-         adjp=deds.calcAdjP(bD=bD[,-1], D=bD[,1], R=geneOrder-1, nsig))
+         fdr=deds.calcFDR(bD=bD[,-1], D=bD[,1], R=geneOrder-1),
+         adjp=deds.calcAdjP(bD=bD[,-1], D=bD[,1], R=geneOrder-1))
   stats <- cbind(geneOrder=geneOrder, X[geneOrder,])
     
   res <- list(E=E, geneOrder=geneOrder, stats=stats, p=p, options=c("p","abs", "euclidean", adj))
   class(res) <- "DEDS"
   return(res)
-}
+  }          
 
 deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam=comp.SAM(L)),
                                 tail=c("abs", "lower", "higher"),
-                                distance=c("weuclid", "euclid"), adj=c("fdr", "adjp"),
-                                nsig=nrow(X)) {
+                                distance=c("weuclid", "euclid"), adj=c("fdr", "adjp")) {
   ### sanity check
   tail <- match.arg(tail)
   distance <- match.arg(distance)
   adj <- match.arg(adj)
-  newX <- deds.checkX(X, L, names(testfun), nsig, B)
+  newX <- deds.checkX(X, L, names(testfun), B)
   deds.checkothers(tail, distance, adj)
   options <- type2test(tail, distance, adj, L)
 
@@ -62,7 +61,6 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   func.compute.p=options$func.compute.p
   X <- newX$X
   L <- newX$L
-  nsig <- newX$nsig
   nT <- newX$nT
   B <- newX$B
   bD <- c()
@@ -104,7 +102,7 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   geneOrder <- order(euclidean(t, E, wval))
   for (i in 1:(B+1)) 
     bD <- cbind(bD, euclidean(BT[[i]], E, wval))
-  p <- func.compute.p(bD=bD[,-1], D=bD[,1], geneOrder-1, K=nsig)
+  p <- func.compute.p(bD=bD[,-1], D=bD[,1], geneOrder-1)
 
   stats <- cbind(geneOrder=geneOrder, t.o[geneOrder,])
     
@@ -117,18 +115,18 @@ deds.stat.linkC <- function(X, L, B=1000, tests=c("t", "fc", "sam"),
                                 tail=c("abs", "lower", "higher"),
                                 extras=NULL,
                                 distance=c("weuclid", "euclid"), adj=c("fdr", "adjp"),
-                                nsig=nrow(X), quick=TRUE) {
+                                quick=TRUE) {
   tail <- match.arg(tail)
   distance <- match.arg(distance)
   adj <- match.arg(adj)
-  newX <- deds.checkX(X, L, tests, nsig, B)
+  newX <- deds.checkX(X, L, tests, B)
   deds.checkothers(tail, distance, adj)
   options <- c(tests, tail, distance, adj)
   if(quick) q<-1
   else q<-0
   if(is.null(extras)) extras <- deds.genExtra(newX$L, tests)
   
-  res <- .C("get_deds_FDR",as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),as.integer(newX$L),as.character(options),as.single(extras), as.integer(q), as.integer(newX$nL), as.integer(newX$nT), as.integer(newX$B), as.integer(newX$nsig), E=double(newX$nT), R=integer(newX$nr), p=double(newX$nr),t=double(newX$nr*newX$nT), NAOK=TRUE, PACKAGE="DEDS")
+  res <- .C("get_deds_FDR",as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),as.integer(newX$L),as.character(options),as.single(extras), as.integer(q), as.integer(newX$nL), as.integer(newX$nT), as.integer(newX$B), E=double(newX$nT), R=integer(newX$nr), p=double(newX$nr),t=double(newX$nr*newX$nT), NAOK=TRUE, PACKAGE="DEDS")
   
   t.o <- matrix(res$t, byrow=FALSE, nc=newX$nT)
   colnames(t.o) <- tests
@@ -201,18 +199,18 @@ deds.next.sample <- function(L)  {
 }
         
 # calculates FDR for class 'DEDS'
-deds.calcFDR <- function(bD, D, R, K=length(D)) {
+deds.calcFDR <- function(bD, D, R) {
   nc <- ncol(bD)
   nr <- nrow(bD)
-  p <- .C("calc_FDR", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), as.integer(K), p=single(nr), PACKAGE="DEDS")$p
+  p <- .C("calc_FDR", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), p=single(nr), PACKAGE="DEDS")$p
   return(p)
 }
 
 # calculates adjusted p for class 'DEDS'
-deds.calcAdjP <- function(bD, D, R, K=length(D)) {
+deds.calcAdjP <- function(bD, D, R) {
   nc <- ncol(bD)
   nr <- nrow(bD)
-  p <- .C("calc_adjP", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), as.integer(K), p=single(nr), PACKAGE="DEDS")$p
+  p <- .C("calc_adjP", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), p=single(nr), PACKAGE="DEDS")$p
   return(p)
 }
 
@@ -243,7 +241,7 @@ comp.stat <- function(X, L, test=c("t","fc","sam","f","modt","modf","B"), extra=
 comp.unadjp <- function(X, L, B=1000, test=c("t","fc","sam","f"),tail=c("abs", "lower", "higher"), extra=NULL){
   tail <- match.arg(tail)
   test <- match.arg(test)
-  newX <- deds.checkX(X, L, test, nsig=nrow(X), B)
+  newX <- deds.checkX(X, L, test, B)
   deds.checkothers(tail, distance="euclid", adj="fdr")
   options <- c(test, tail, "euclid", "fdr")
   if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
@@ -252,6 +250,38 @@ comp.unadjp <- function(X, L, B=1000, test=c("t","fc","sam","f"),tail=c("abs", "
             as.character(options), as.double(extra), as.integer(newX$nL), as.integer(newX$B), NAOK=TRUE, PACKAGE="DEDS")
   ret <- as.matrix(cbind(res$t,res$p))
   colnames(ret) <- c(test, "unadj.p")
+  return(ret)
+}
+
+comp.adjp <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tail=c("abs", "lower", "higher"), extra=NULL){
+  tail <- match.arg(tail)
+  test <- match.arg(test)
+  newX <- deds.checkX(X, L, test,  B)
+  deds.checkothers(tail, distance="euclid", adj="fdr")
+  options <- c(test, tail, "euclid", "fdr")
+  if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
+  res <- .C('get_adjp',as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),
+           as.integer(newX$L),t=single(newX$nr), p=single(newX$nr), adjp=single(newX$nr),
+            r=integer(newX$nr), as.character(options), as.double(extra),
+            as.integer(newX$nL), as.integer(newX$B), NAOK=TRUE)
+  ret <- as.matrix(cbind(res$r+1,res$t,res$p,res$adjp))
+  colnames(ret) <- c("order",test, "unadj.p", "adj.p")
+  return(ret)
+}
+
+comp.fdr <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tail=c("abs", "lower", "higher"), extra=NULL){
+  tail <- match.arg(tail)
+  test <- match.arg(test)
+  newX <- deds.checkX(X, L, test, B)
+  deds.checkothers(tail, distance="euclid", adj="fdr")
+  options <- c(test, tail, "euclid", "fdr")
+  if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
+  res <- .C('get_fdr',as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),
+           as.integer(newX$L),t=single(newX$nr), p=single(newX$nr), q=single(newX$nr),
+            r=integer(newX$nr), as.character(options), as.double(extra), as.integer(newX$nL),
+            as.integer(newX$B), NAOK=TRUE)
+  ret <- as.matrix(cbind(res$r+1,res$t,res$p,res$q))
+  colnames(ret) <- c("order", test, "unadj.p", "qvalues")
   return(ret)
 }
 
@@ -278,23 +308,16 @@ deds.genExtra <- function(classlabel, tests) {
   return(extra)
 }
   
-deds.checkX<-function(X, classlabel, tests, nsig=nrow(X), B){
+deds.checkX<-function(X, classlabel, tests, B){
   if((!is.matrix(X)) || !(is.numeric(X)))
      stop("X needs to be a matrix\n")
   if(ncol(X)!=length(classlabel))
     stop("the number of column of X needs to be the same as the length of classlabel\n")
+  X <- X[, order(classlabel)]
   L <- deds.checkclasslabel(classlabel,tests)
   B <- deds.checkB(L, B)
-  if((length(nsig)>1) || !(is.integer(as.integer(nsig))) ||(!is.vector(nsig)))
-     stop(paste("nsig needs to be just a integer\n","your nsig=",nsig,"\n"))
-  if(nsig<0)
-     stop(paste("the number of output genes (nsig) needs to be positive, \n", "your nsig=",nsig))
-  if(nsig>nrow(X)) {
-    cat("the number of output genes (nsig) can not succeed the number of rows of X,\n", "your nsig =",nsig, "\n")
-    cat("reset nsig to be the number of rows of X, now nsig =", nrow(X), "\n")
-    nsig <- nrow(X)
-  }
-  return(list(X=X, nr=nrow(X), nc=ncol(X), L=L, nL=length(unique(L)), nT=length(tests), nsig=nsig, B=B))
+  
+  return(list(X=X, nr=nrow(X), nc=ncol(X), L=L, nL=length(unique(L)), nT=length(tests), B=B))
     
 }
 
@@ -315,13 +338,15 @@ deds.checkothers<-function(tail="abs", distance="weuclid", adj="fdr")
 deds.checkclasslabel <- function(classlabel, tests) {
   ntests <- if(!missing(tests)) length(tests)
             else 0
-  newL <- as.integer(classlabel)
+  newL <- as.integer(classlabel) 
+  l <- length(unique(newL))
   if((!is.integer(newL)) ||(!is.vector(newL)))
      stop("classlabel needs to be just a vector of integers")
   l <- length(unique(newL))
   if(l == 1) newL <- rep(0, length(newL))
   else  newL <- rep(0:(l-1), table(newL))
 
+  
   if (ntests>=1) {
     for (i in 1:ntests) {
       test <- tests[i]
@@ -764,7 +789,7 @@ comp.F <- function(L=NULL){
     L <- newX$L
     X <- newX$X
      m1 <- apply(X, 1, function(z){
-       (summary(lm(z ~ L))$coefficients[2,"t value"])^2})
+       (summary(lm(z ~ as.factor(L), na.action=na.omit))$f["value"])})
     return(m1)
   }
      
@@ -778,7 +803,7 @@ comp.modt <- function(L=NULL) {
     nr <- newX$nr
     L <- newX$L
     nL <- newX$nL
-    res <- .C("get_t_mod_stat",as.double(X), as.integer(nr), as.integer(nc), as.integer(L), t=single(nr), as.integer(nL), NAOK=TRUE, PACKAGE="DEDS")$t
+    res <- .C("get_t_mod_stat",as.double(X), as.integer(nr), as.integer(nc), as.integer(L), t=single(nr), as.integer(nL), NAOK=TRUE, PACKAGE="deds2")$t
 
     return(res)
   }
@@ -830,6 +855,7 @@ test.checkX<-function(X, classlabel, test){
      stop("X needs to be a matrix\n")
   if(ncol(X)!=length(classlabel))
     stop("the number of column of X needs to be the same as the length of classlabel\n")
+  X <- X[, order(classlabel)]
   L <- deds.checkclasslabel(classlabel,test)
   return(list(X=X, nr=nrow(X), nc=ncol(X), L=L, nL=length(unique(L))))
 }
@@ -852,12 +878,12 @@ pairs.DEDS <- function(x, subset=c(1:nrow(x$stats)), labels=colnames(x$stats[,-1
   p <- x$p[subset] 
   if(logit) stats <- -log10(stats)
   if(groups.by.deds==TRUE) {
-    groups <- rep("nsig", length(geneOrder))
+    groups <- rep("non-DE", length(geneOrder))
     if(thresh<1) noDE <- sum(p<=thresh)
     else noDE <- thresh
     sub <- 1:noDE
-    groups[sub] <- "sig"
-    groups<- factor(groups, levels=c("nsig", "sig"))
+    groups[sub] <- "DE"
+    groups<- factor(groups, levels=c("non-DE", "DE"))
   }
   else groups <- as.factor(rep(1, nrow(stats)))
   
@@ -1041,18 +1067,3 @@ hist.DEDS <- function(x, subset=c(1:nrow(x$stats)), ...) {
   }
 }
     
-##########################################################################
-.First.lib <- function(libname, pkgname, where) {
-    require(methods)
-    if(missing(where)) {
-        where <- match(paste("package:", pkgname, sep=""), search())
-        if(is.na(where)) {
-            warning(paste("Not a package name: ",pkgname))
-            return()
-          }
-    where <- pos.to.env(where)
-    }
-    .initDEDS(where)
-    cacheMetaData(as.environment(where))
-    library.dynam("DEDS", pkgname, libname)
-}
