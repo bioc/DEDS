@@ -48,12 +48,6 @@ topgenes(obj, number = 10, genelist = NULL, sort.by = c("deds", colnames(obj$sta
 
 \seealso{\code{\link{deds.stat.linkC}}, \code{\link{deds.pval}}}
 \examples{
-X <- matrix(rnorm(1000,0,0.5), nc=10)
-L <- rep(0:1,c(5,5))
-
-# genes 1-10 are differentially expressed
-X[1:10,6:10]<-X[1:10,6:10]+1
-
 }
 
 \keyword{htest}
