@@ -1,7 +1,10 @@
 ###########################################################################
 ## Set Class
-setClass("DEDS", representation("list"))
-
+#require(methods)
+#.initDEDS <- function() {
+#setClass("DEDS", representation("list"), where=where)
+#setClass("DEDS", representation("list"))
+#}
 
 ############################
 ## using p values from different meausres
@@ -105,8 +108,9 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   stats <- cbind(geneOrder=geneOrder, t.o[geneOrder,])
     
   res <- list(geneOrder=geneOrder, E=E, stats=stats, p=p, options=c("t", options))
-  Res <- new("DEDS", unclass(res))
-  return(Res)
+  #Res <- new("DEDS", unclass(res))
+  class(res) <- "DEDS"
+  return(res)
 }
 
 deds.stat.linkC <- function(X, L, B=1000, tests=c("t", "fc", "sam"),
@@ -801,7 +805,7 @@ comp.modt <- function(L=NULL) {
     nr <- newX$nr
     L <- newX$L
     nL <- newX$nL
-    res <- .C("get_t_mod_stat",as.double(X), as.integer(nr), as.integer(nc), as.integer(L), t=single(nr), as.integer(nL), NAOK=TRUE, PACKAGE="deds2")$t
+    res <- .C("get_t_mod_stat",as.double(X), as.integer(nr), as.integer(nc), as.integer(L), t=single(nr), as.integer(nL), NAOK=TRUE, PACKAGE="DEDS")$t
 
     return(res)
   }
@@ -1064,4 +1068,3 @@ hist.DEDS <- function(x, subset=c(1:nrow(x$stats)), ...) {
     abline(h=nrow(p)/50, col="black", lwd=4, lty=2)
   }
 }
-    
