@@ -10,7 +10,7 @@
   \code{\link{deds.stat}} and \code{\link{deds.stat.linkC}}.
 }
  
-\section{Slots/List Components}{
+\section{List Components}{
   \code{DEDS} objects can be created by \code{new("DEDS",deds)} where
   \code{deds} is a list. This class contains no slots, but objects
   should contain the following list components:

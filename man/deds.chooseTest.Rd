@@ -54,8 +54,8 @@ L <- rep(0:1,c(5,5))
 X[1:10,6:10]<-X[1:10,6:10]+1
 
 # as a default, chooses t, fc and sam
-funcs <- deds.chooseTest(L)
-deds.X <- deds.stat(X, L, testfun=funcs)
+\dontrun{funcs <- deds.chooseTest(L)
+deds.X <- deds.stat(X, L, testfun=funcs)}
 
 # chooses F statistic, SAM statistic, and moderated F statistic
 L <- rep(0:2, c(3,3,4))

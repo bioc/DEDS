@@ -53,13 +53,7 @@ L <- rep(0:1,c(5,5))
 
 # genes 1-10 are differentially expressed
 X[1:10,6:10]<-X[1:10,6:10]+1
-# DEDS summarizing t, fc and sam
-d <- deds.stat.linkC(X, L, B=200)
 
-# top table, ranked by DEDS
-topgenes(d)
-# top table, ranked by t
-topgenes(d, sort.by="t")
 }
 
 \keyword{htest}

@@ -113,9 +113,9 @@ X[1:10,6:10]<-X[1:10,6:10]+1
 # DEDS summarizing t, sam and fc
 deds.X <- deds.stat(X, L, B=200)
 
-# DEDS summarizing t, tmod and fc
-\dontrun{deds.X <- deds.stat(X, L, testfun=list(t=comp.t(L),
-tmod=comp.modt(L), sam=comp.SAM(L)))}
+# DEDS summarizing t, modt and fc
+deds.X <- deds.stat(X, L, testfun=list(t=comp.t(L),
+modt=comp.modt(L), sam=comp.SAM(L)))
 
 # one can also use:
 \dontrun{deds.X <- deds.stat(X, L, testfun=deds.chooseTest(L,

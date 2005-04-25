@@ -63,20 +63,7 @@ xlab = "Quantiles of standard normal", thresh = 0.05, col = palette(), pch, ...)
   \code{\link{qqnorm.DEDS}}}
 
 \examples{
-X <- matrix(rnorm(1000,0,0.5), nc=10)
-L <- rep(0:1,c(5,5))
 
-# genes 1-10 are differentially expressed
-X[1:10,6:10]<-X[1:10,6:10]+1
-# DEDS summarizing t, fc and sam
-d <- deds.stat.linkC(X, L, B=200)
-
-# qqnorm for t, fc and sam
-qqnorm(d)
-# change points color
-qqnorm(d, col=c(2,3))
-# change points type
-qqnorm(d, pch=c(1,2))
 }
 \keyword{hplot}
 
