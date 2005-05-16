@@ -22,10 +22,10 @@
 deds.checkB(classlabel, B, verbose = TRUE)
 deds.checkothers(tail = "abs", distance = "weuclid", adj = "fdr")
 deds.checkclasslabel(classlabel, tests)
-deds.checkX(X, classlabel, tests, B)
+deds.checkX(X, classlabel, tests, nsig = nrow(X), B)
 test.checkX(X, classlabel, test)
-deds.calcFDR(bD, D, R)
-deds.calcAdjP(bD, D, R)
+deds.calcFDR(bD, D, R, K = length(D))
+deds.calcAdjP(bD, D, R, K = length(D))
 deds.next.sample(L)
 type2test(tail = c("abs", "higher", "lower"), distance = c("weuclid",
 "euclid"), adj = c("fdr", "adjp"), L)

@@ -9,7 +9,7 @@
 \usage{
 deds.stat(X, L, B = 1000, testfun = list(t = comp.t(L), fc = comp.FC(L),
 sam = comp.SAM(L)), tail = c("abs", "lower", "higher"), distance =
-c("weuclid", "euclid"), adj = c("fdr", "adjp"))
+c("weuclid", "euclid"), adj = c("fdr", "adjp"), nsig = nrow(X))
 }
 
 \arguments{
@@ -51,6 +51,11 @@ c("weuclid", "euclid"), adj = c("fdr", "adjp"))
     are returned. \cr
     If \code{adj="adjp"}, ajusted \eqn{p} values that controls family wise
       type I error rate is returned.}
+  \item{nsig}{If \code{adj = "fdr"}, \code{nsig} specifies the number of top
+    differentially expressed genes whose \eqn{q} values will be calculated; we recommend 
+    setting \code{nsig < m}, as the computation of $q$ values will be extensive. $q$ values
+    for the rest of genes will be approximated to 1. If \code{adj = "adjp"}, the 
+    calculation of the adjusted \eqn{p} values will be for the whole dataset.}
 }
 \details{
   \code{deds.stat} summarizes multiple statistical measures for the
@@ -76,14 +81,6 @@ c("weuclid", "euclid"), adj = c("fdr", "adjp"))
   user to use \code{\link{deds.stat.linkC}} as the default
   function. \code{\link{deds.stat.linkC}} interfaces to a C function,
   which handles a 10,000 by 10 matrix and 1000 permutations in minutes.
-
-  If the size of the data matrix is too big, computation of q values for
-  each gene becomes a problem. Currently, if the number of genes
-  multiplied by the number of permutations is smaller than 1e7
-  (i.e. 10,000 genes and 1,000 permutations), the
-  function derive q values for each gene; if bigger, we first estimate
-  the percentage of DE genes, and compute q values for those genes and
-  equal the q values of the rest of the genes to be zero.
 
   DEDS can also summarize \eqn{p} values from different statistical
   models, see \code{\link{deds.pval}}.
@@ -113,9 +110,9 @@ X[1:10,6:10]<-X[1:10,6:10]+1
 # DEDS summarizing t, sam and fc
 deds.X <- deds.stat(X, L, B=200)
 
-# DEDS summarizing t, modt and fc
-deds.X <- deds.stat(X, L, testfun=list(t=comp.t(L),
-modt=comp.modt(L), sam=comp.SAM(L)))
+# DEDS summarizing t, tmod and fc
+\dontrun{deds.X <- deds.stat(X, L, testfun=list(t=comp.t(L),
+tmod=comp.modt(L), sam=comp.SAM(L)))}
 
 # one can also use:
 \dontrun{deds.X <- deds.stat(X, L, testfun=deds.chooseTest(L,

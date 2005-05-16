@@ -9,7 +9,7 @@
 \usage{
 deds.stat.linkC(X, L, B = 1000, tests = c("t", "fc", "sam"), tail =
 c("abs", "lower", "higher"), extras = NULL, distance = c("weuclid",
-"euclid"), adj = c("fdr", "adjp"), quick = TRUE)
+"euclid"), adj = c("fdr", "adjp"), nsig = nrow(X), quick = TRUE)
 }
 
 \arguments{
@@ -60,6 +60,11 @@ c("abs", "lower", "higher"), extras = NULL, distance = c("weuclid",
     values are returned. \cr
     If \code{adj="adjp"}, ajusted \eqn{p} values that controls family wise
       type I error rate are returned.}
+  \item{nsig}{If \code{adj = "fdr"}, \code{nsig} specifies the number of top
+    differentially expressed genes whose \eqn{q} values will be calculated; we recommend 
+    setting \code{nsig < m}, as the computation of \eqn{q} values will be extensive. \eqn{q} values
+    for the rest of genes will be approximated to 1. If \code{adj = "adjp"}, the 
+    calculation of the adjusted \eqn{p} values will be for the whole dataset.}
   \item{quick}{A logical variable specifying if a quick but memory
     requiring procedure will be selected. If \code{quick=TRUE},
     permutation will be carried out once and stored in memory; If
@@ -88,14 +93,6 @@ c("abs", "lower", "higher"), extras = NULL, distance = c("weuclid",
   \code{deds.stat.linkC} but is written completely in R (therefore
   slower) and the user can supply their own function for a statistic
   not covered in the DEDS package.
-
-   If the size of the data matrix is too big, computation of q values for
-  each gene becomes a problem. Currently, if the number of genes
-  multiplied by the number of permutations is smaller than 1e7
-  (i.e. 10,000 genes and 1,000 permutations), the
-  function derive q values for each gene; if bigger, we first estimate
-  the percentage of DE genes, and compute q values for those genes and
-  equal the q values of the rest of the genes to be zero.
   
   DEDS can also summarize p values from different statistical models, see
   \code{\link{deds.pval}}.

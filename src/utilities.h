@@ -11,7 +11,6 @@
 
 #define EPSILON (12*FLT_EPSILON)
 #define NA_FLOAT FLT_MAX  
-#define LEN_LIMIT   1e7 /*the length limit (ngene*B) for calculating q values */  
 
 typedef struct tagGENE_DATA{
   float **d; /*the gene values matrix, mxn*/
@@ -26,7 +25,7 @@ typedef void (*FUNC_COMPUTE_STAT)(GENE_DATA*, int*, float *, const void*);
 typedef float(*FUNC_STAT)(const float *, const int *, const int, const void*);
 typedef float (*FUNC_MAX)(float *, int);
 typedef int (*FUNC_CMP)(const void *v1, const void *v2);
-typedef void (*FUNC_COMPUTE_P)(float *, float *, int *, int *, int *, float *);
+typedef void (*FUNC_COMPUTE_P)(float *, float *, int *, int *, int *, int *, float *);
 
 typedef struct tagTEST_DATA{
   int n_stat;
@@ -40,6 +39,7 @@ typedef struct tagTEST_DATA{
 } TEST_DATA;
 
 typedef struct tagDEDS_RES{
+  int nsig;
   int nT;
   int nrow;
   int *R;
@@ -90,7 +90,7 @@ void free_gene_data(GENE_DATA *pdata);
 void create_gene_data(double*d,  int*pnrow, int *pncol, int *L, GENE_DATA *pdata);
 void print_gene_data(GENE_DATA *pdata);
 void print_b(int b, int B, char *prompt);
-void create_deds_res(int *pnrow, int *pnT, DEDS_RES *pdr);
+void create_deds_res(int *pnrow, int *pnsig, int *pnT, DEDS_RES *pdr);
 void free_deds_res(DEDS_RES *pdr);
 void extract_deds_res(DEDS_RES *pdr, double *E, int *R, double *FDR, double *T);
 void create_tmod_data(int *pnrow, TMOD_DATA *ptmod);
@@ -109,9 +109,9 @@ void func_get_order(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B);
 void func_get_FDR(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B);
 void func_deds_quick(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B) ;
 void get_deds_FDR(double *d, int *pnrow, int *pncol, int *L, char **options, float *extras, int *quick, 
-		   int *nL, int *nT, int *B, double *E, int *R, double *FDR, double *T);
-void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, float *F);
-void calc_adjP(float *bD, float *D, int *R, int *pnrow, int *pncol, float *F);
+		   int *nL, int *nT, int *B, int *pnsig, double *E, int *R, double *FDR, double *T);
+void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, float *F);
+void calc_adjP(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, float *F);
 void get_ebayes(double *d, int *pnrow, int *pncol, int *L, int *nL, float *T, float *B, float *proportion);
 void get_B(double *d, int *pnrow, int *pncol, int *L, int *nL, float *B, float *proportion);
 void get_t_mod_stat(double *d, int *pnrow, int *pncol, int *L, float *T, int *nL);

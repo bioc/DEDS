@@ -8,7 +8,7 @@
   expression (DE) to rank and select a set of DE genes.
 }
 \usage{
-deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200)
+deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200, nsig = nrow(X))
 }
 
 \arguments{
@@ -26,6 +26,8 @@ deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200)
   \item{B}{The number of permutations. For a complete enumeration,
       \code{B} should be 0 (zero) or any number not less than the total
       number of permutations.}
+  \item{nsig}{A numeric variable specifying the number of top genes that
+    will be returned.}
 }
 \details{
   \code{deds.pval} summarizes \eqn{p} values from multiple statistical models

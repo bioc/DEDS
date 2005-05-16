@@ -73,10 +73,11 @@ void print_gene_data(GENE_DATA *pdata)
   }
 }
 
-void create_deds_res(int *pnrow, int *pnT, DEDS_RES *pdr)
+void create_deds_res(int *pnrow, int *pnsig, int *pnT, DEDS_RES *pdr)
 {
   int i;
   pdr->nrow=*pnrow;
+  pdr->nsig=*pnsig;
   pdr->nT=*pnT;
 
   assert(pdr->R=(int *)malloc(sizeof(int)*(*pnrow)));

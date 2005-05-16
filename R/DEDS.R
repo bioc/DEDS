@@ -1,9 +1,8 @@
 ###########################################################################
 ## Set Class
 #require(methods)
-#.initDEDS <- function() {
+#.initDEDS <- function(where) {
 #setClass("DEDS", representation("list"), where=where)
-#setClass("DEDS", representation("list"))
 #}
 
 ############################
@@ -11,7 +10,7 @@
 ## X -- matrix of p values from different measures
 
 deds.pval <- function(X, E=rep(0,ncol(X)), adj=c("fdr", "adjp"),
-                          B=200) {
+                          B=200, nsig=nrow(X)) {
   ## draws unifom distribution along the columns of X
   genUniform <- function(X) { 
     X <- as.matrix(X)
@@ -35,23 +34,24 @@ deds.pval <- function(X, E=rep(0,ncol(X)), adj=c("fdr", "adjp"),
 
   adj <- match.arg(adj)
   p <- switch(adj,
-         fdr=deds.calcFDR(bD=bD[,-1], D=bD[,1], R=geneOrder-1),
-         adjp=deds.calcAdjP(bD=bD[,-1], D=bD[,1], R=geneOrder-1))
+         fdr=deds.calcFDR(bD=bD[,-1], D=bD[,1], R=geneOrder-1, nsig),
+         adjp=deds.calcAdjP(bD=bD[,-1], D=bD[,1], R=geneOrder-1, nsig))
   stats <- cbind(geneOrder=geneOrder, X[geneOrder,])
     
   res <- list(E=E, geneOrder=geneOrder, stats=stats, p=p, options=c("p","abs", "euclidean", adj))
   class(res) <- "DEDS"
   return(res)
-  }          
+}
 
 deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam=comp.SAM(L)),
                                 tail=c("abs", "lower", "higher"),
-                                distance=c("weuclid", "euclid"), adj=c("fdr", "adjp")) {
+                                distance=c("weuclid", "euclid"), adj=c("fdr", "adjp"),
+                                nsig=nrow(X)) {
   ### sanity check
   tail <- match.arg(tail)
   distance <- match.arg(distance)
   adj <- match.arg(adj)
-  newX <- deds.checkX(X, L, names(testfun), B)
+  newX <- deds.checkX(X, L, names(testfun), nsig, B)
   deds.checkothers(tail, distance, adj)
   options <- type2test(tail, distance, adj, L)
 
@@ -62,6 +62,7 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   func.compute.p=options$func.compute.p
   X <- newX$X
   L <- newX$L
+  nsig <- newX$nsig
   nT <- newX$nT
   B <- newX$B
   bD <- c()
@@ -103,12 +104,11 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   geneOrder <- order(euclidean(t, E, wval))
   for (i in 1:(B+1)) 
     bD <- cbind(bD, euclidean(BT[[i]], E, wval))
-  p <- func.compute.p(bD=bD[,-1], D=bD[,1], geneOrder-1)
+  p <- func.compute.p(bD=bD[,-1], D=bD[,1], geneOrder-1, K=nsig)
 
   stats <- cbind(geneOrder=geneOrder, t.o[geneOrder,])
     
   res <- list(geneOrder=geneOrder, E=E, stats=stats, p=p, options=c("t", options))
-  #Res <- new("DEDS", unclass(res))
   class(res) <- "DEDS"
   return(res)
 }
@@ -117,18 +117,18 @@ deds.stat.linkC <- function(X, L, B=1000, tests=c("t", "fc", "sam"),
                                 tail=c("abs", "lower", "higher"),
                                 extras=NULL,
                                 distance=c("weuclid", "euclid"), adj=c("fdr", "adjp"),
-                                quick=TRUE) {
+                                nsig=nrow(X), quick=TRUE) {
   tail <- match.arg(tail)
   distance <- match.arg(distance)
   adj <- match.arg(adj)
-  newX <- deds.checkX(X, L, tests, B)
+  newX <- deds.checkX(X, L, tests, nsig, B)
   deds.checkothers(tail, distance, adj)
   options <- c(tests, tail, distance, adj)
   if(quick) q<-1
   else q<-0
   if(is.null(extras)) extras <- deds.genExtra(newX$L, tests)
   
-  res <- .C("get_deds_FDR",as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),as.integer(newX$L),as.character(options),as.single(extras), as.integer(q), as.integer(newX$nL), as.integer(newX$nT), as.integer(newX$B), E=double(newX$nT), R=integer(newX$nr), p=double(newX$nr),t=double(newX$nr*newX$nT), NAOK=TRUE, PACKAGE="DEDS")
+  res <- .C("get_deds_FDR",as.double(newX$X),as.integer(newX$nr),as.integer(newX$nc),as.integer(newX$L),as.character(options),as.single(extras), as.integer(q), as.integer(newX$nL), as.integer(newX$nT), as.integer(newX$B), as.integer(newX$nsig), E=double(newX$nT), R=integer(newX$nr), p=double(newX$nr),t=double(newX$nr*newX$nT), NAOK=TRUE, PACKAGE="DEDS")
   
   t.o <- matrix(res$t, byrow=FALSE, nc=newX$nT)
   colnames(t.o) <- tests
@@ -201,18 +201,18 @@ deds.next.sample <- function(L)  {
 }
         
 # calculates FDR for class 'DEDS'
-deds.calcFDR <- function(bD, D, R) {
+deds.calcFDR <- function(bD, D, R, K=length(D)) {
   nc <- ncol(bD)
   nr <- nrow(bD)
-  p <- .C("calc_FDR", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), p=single(nr), PACKAGE="DEDS")$p
+  p <- .C("calc_FDR", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), as.integer(K), p=single(nr), PACKAGE="DEDS")$p
   return(p)
 }
 
 # calculates adjusted p for class 'DEDS'
-deds.calcAdjP <- function(bD, D, R) {
+deds.calcAdjP <- function(bD, D, R, K=length(D)) {
   nc <- ncol(bD)
   nr <- nrow(bD)
-  p <- .C("calc_adjP", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), p=single(nr), PACKAGE="DEDS")$p
+  p <- .C("calc_adjP", as.single(bD), as.single(D), as.integer(R), as.integer(nr), as.integer(nc), as.integer(K), p=single(nr), PACKAGE="DEDS")$p
   return(p)
 }
 
@@ -243,7 +243,7 @@ comp.stat <- function(X, L, test=c("t","fc","sam","f","modt","modf","B"), extra=
 comp.unadjp <- function(X, L, B=1000, test=c("t","fc","sam","f"),tail=c("abs", "lower", "higher"), extra=NULL){
   tail <- match.arg(tail)
   test <- match.arg(test)
-  newX <- deds.checkX(X, L, test, B)
+  newX <- deds.checkX(X, L, test, nsig=nrow(X), B)
   deds.checkothers(tail, distance="euclid", adj="fdr")
   options <- c(test, tail, "euclid", "fdr")
   if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
@@ -258,7 +258,7 @@ comp.unadjp <- function(X, L, B=1000, test=c("t","fc","sam","f"),tail=c("abs", "
 comp.adjp <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tail=c("abs", "lower", "higher"), extra=NULL){
   tail <- match.arg(tail)
   test <- match.arg(test)
-  newX <- deds.checkX(X, L, test,  B)
+  newX <- deds.checkX(X, L, test, nsig=nrow(X), B)
   deds.checkothers(tail, distance="euclid", adj="fdr")
   options <- c(test, tail, "euclid", "fdr")
   if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
@@ -274,7 +274,7 @@ comp.adjp <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tai
 comp.fdr <- function(X, L, B=1000, test=c("t","fc","sam","f","modt","modf"),tail=c("abs", "lower", "higher"), extra=NULL){
   tail <- match.arg(tail)
   test <- match.arg(test)
-  newX <- deds.checkX(X, L, test, B)
+  newX <- deds.checkX(X, L, test, nsig=nrow(X), B)
   deds.checkothers(tail, distance="euclid", adj="fdr")
   options <- c(test, tail, "euclid", "fdr")
   if(is.null(extra)) extra <- deds.genExtra(newX$L, test)
@@ -310,7 +310,7 @@ deds.genExtra <- function(classlabel, tests) {
   return(extra)
 }
   
-deds.checkX<-function(X, classlabel, tests, B){
+deds.checkX<-function(X, classlabel, tests, nsig=nrow(X), B){
   if((!is.matrix(X)) || !(is.numeric(X)))
      stop("X needs to be a matrix\n")
   if(ncol(X)!=length(classlabel))
@@ -318,8 +318,16 @@ deds.checkX<-function(X, classlabel, tests, B){
   X <- X[, order(classlabel)]
   L <- deds.checkclasslabel(classlabel,tests)
   B <- deds.checkB(L, B)
-  
-  return(list(X=X, nr=nrow(X), nc=ncol(X), L=L, nL=length(unique(L)), nT=length(tests), B=B))
+  if((length(nsig)>1) || !(is.integer(as.integer(nsig))) ||(!is.vector(nsig)))
+     stop(paste("nsig needs to be just a integer\n","your nsig=",nsig,"\n"))
+  if(nsig<0)
+     stop(paste("the number of output genes (nsig) needs to be positive, \n", "your nsig=",nsig))
+  if(nsig>nrow(X)) {
+    cat("the number of output genes (nsig) can not succeed the number of rows of X,\n", "your nsig =",nsig, "\n")
+    cat("reset nsig to be the number of rows of X, now nsig =", nrow(X), "\n")
+    nsig <- nrow(X)
+  }
+  return(list(X=X, nr=nrow(X), nc=ncol(X), L=L, nL=length(unique(L)), nT=length(tests), nsig=nsig, B=B))
     
 }
 
@@ -1067,4 +1075,10 @@ hist.DEDS <- function(x, subset=c(1:nrow(x$stats)), ...) {
     #hist(p, xlab = xlabs[i], nclass = nclass, col = col, border = border, cex = cex, main=main, ...)
     abline(h=nrow(p)/50, col="black", lwd=4, lty=2)
   }
+}
+    
+##########################################################################
+.First.lib <- function(libname, pkgname) {
+    require(methods)
+    library.dynam("DEDS", pkgname, libname)
 }

@@ -228,7 +228,7 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
   float **BT, *junk, pi0, q1, q2; 
   int b, *bL, is_next, *R1, *total2, total1=0, *count1, *count2;
   int i,j;
-  int total, topn;
+  int total;
 
   assert(BT=(float **)malloc(sizeof(float *)*(*B)));
   for (i=0;i<(*B);i++) {
@@ -266,7 +266,7 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
   /*changed to the orignal stat, which is monotone of t and centered*/
   while(is_next){
     (*func_test)(&data, bL, BT[b], nL);
-    /*deal with unajdusted value first*/
+    /*deal with unajdused value first*/
       for(i=0;i<(*pnrow);i++){
       if(T[i]==NA_FLOAT) continue;
       if(BT[b][i]!=NA_FLOAT){
@@ -289,6 +289,34 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
     }
   }
    
+   
+  order_data(junk,R1,total,func_cmp);
+  sort_vector(junk,R1,total);
+	 
+  /*deal with fdr*/
+  for(i=0;i<(*pnrow);i++){
+    if(T[i]==NA_FLOAT) continue;
+    for(j=0;j<total;j++) {
+      if(junk[j]==NA_FLOAT) continue;
+      if((func_cmp==cmp_high) && (junk[j]<T[i])) {
+	count1[i]=j;
+	break;
+      }
+      if((func_cmp==cmp_low) && (junk[j]>T[i])) {
+	count1[i]=j;
+	break;
+      }
+      if((func_cmp==cmp_abs) && (fabs(junk[j])<fabs(T[i]))) {
+	count1[i]=j;
+	break;
+      }
+     }
+    if(count1[i]>(i+1)*(*B)) {
+      for(j=(i+1);j<(*pnrow);j++) count1[j]=(j+1)*(*B);
+      break;
+    }
+  }
+  
   q1=T[(int)floor(0.25*(*pnrow))];
   q2=T[(int)floor(0.75*(*pnrow))];
   for (i=0;i<total;i++) {
@@ -298,64 +326,7 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
   }
   pi0=total1*1.0/(*B)/(0.5*(*pnrow));
   if(pi0>1) pi0=1;
-  Rprintf("\nestimated percentage of null genes is: pi0==%5.3f\n", pi0);
-  
-  if(total<LEN_LIMIT){
-    order_data(junk,R1,total,func_cmp);
-    sort_vector(junk,R1,total);
-	 
-    /*deal with fdr*/
-    for(i=0;i<(*pnrow);i++){
-      if(T[i]==NA_FLOAT) continue;
-      for(j=0;j<total;j++) {
-	if(junk[j]==NA_FLOAT) continue;
-	if((func_cmp==cmp_high) && (junk[j]<T[i])) {
-	  count1[i]=j;
-	  break;
-	}
-	if((func_cmp==cmp_low) && (junk[j]>T[i])) {
-	  count1[i]=j;
-	  break;
-	}
-	if((func_cmp==cmp_abs) && (fabs(junk[j])<fabs(T[i]))) {
-	  count1[i]=j;
-	  break;
-	}
-      }
-      if(count1[i]>(int)ceil((i+1)*(*B)/pi0)) {
-	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*B)/pi0);
-	break;
-      }
-    }
-  }
-  else {
-    if(pi0<0.95) {
-      topn = (int)ceil((double)(*pnrow)*(1-pi0*1.0));
-      Rprintf("\ntopn=%d",topn);
-       Rprintf("\nSample size too big....We calculate q values for the top %5.3f percent (%d) genes \nand the rest will be equaled to 1\n", 1-pi0, topn);
-    }
-    else {
-      topn = (int)ceil(((double)(*pnrow))*0.05);
-      Rprintf("\ntopn=%d",topn);
-      Rprintf("\nSample size too big....We calculate q values for the top 5 percent (%d) genes and the rest will be equaled to 1\n", topn);
-    }
-   
-    for (i=0;i<topn;i++) {
-      count1[i]=0;
-      for(j=0;j<total;j++) {
-	if(junk[j]==NA_FLOAT) continue;
-	if((func_cmp==cmp_high) && (junk[j]>=T[i]))  count1[i]++;
-	if((func_cmp==cmp_low) && (junk[j]<=T[i]))  count1[i]++;
-	if((func_cmp==cmp_abs) && (fabs(junk[j])>=fabs(T[i]))) count1[i]++;
-      }
-      print_b(i+1,topn,"");
-      if(count1[i]>(int)ceil((i+1)*(*B)/pi0)){
-	for(j=(i+1);j<(*pnrow);j++) count1[j]=(int)ceil((j+1)*(*B)/pi0);
-	break;
-      }
-    }
-    for (i=topn;i<(*pnrow);i++) count1[i]=(int)ceil((i+1)*(*B)/pi0);
-  }
+  Rprintf("\npi0=%5.3f\n", pi0);
     
   /*summarize the results*/
   /*unadjusted one*/
