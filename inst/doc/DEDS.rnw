@@ -11,8 +11,6 @@
 \usepackage{amsmath,epsfig,fullpage}%,psfig,pstricks
 \usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
-%\usepackage{C:/PROGRA~1/R/rw1091/share/texmf/Sweave}
-%\usepackage{Sweave}
 
 \parindent 0in
 
@@ -48,11 +46,6 @@ University of California, San Francisco\\
 {\tt yxiao@itsa.ucsf.edu}\\
 {\tt jean@biostat.ucsf.edu}
 \end{center}
-
-%library(tools)
-%Rnwfile<- file.path("C:/Rpackages/DEDS/DEDS/inst/doc","DEDS.Rnw")
-%Sweave(Rnwfile,pdf=TRUE,eps=TRUE,stylepath=TRUE,driver=RweaveLatex())
-
 
 \tableofcontents
 
