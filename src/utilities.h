@@ -1,3 +1,4 @@
+#include <R_ext/Random.h>
 #include <R.h>
 #include <Rmath.h>
 #include <R_ext/Applic.h>
