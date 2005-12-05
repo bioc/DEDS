@@ -68,7 +68,7 @@ void creat_sampling(int n, int *L, int B)
   for (i=0;i<n;i++)
     l_ordern[i]=i;
 
-  set_seed(g_random_seed);
+  /*set_seed(g_random_seed);*/
 }
 
 void delete_sampling()
@@ -97,15 +97,16 @@ int next_sample(int *L)
 
 int next_sample_1(int *L)
 {
+  GetRNGstate();
   int n=l_n, i;
   if (l_b>=l_B) return 0;
   memcpy(l_permun, l_ordern, sizeof(int)*n);
   for (i=0;i<n;i++) {
-    if (get_rand()<0.5) L[i]=1;
+    if (unif_rand()<0.5) L[i]=1;
     else L[i]=-1;
   }
   l_b++;
-
+  PutRNGstate();
   return(1);
 }
 
