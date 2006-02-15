@@ -85,7 +85,7 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   else wval <- rep(1, nT)
 
   ################  start permutation 
-  BT <- list(t)
+  BT <- list(tO)
   for (i in 1:B) {
     bX <- func.next.sample(X)
     tB <- applyTest(bX)
