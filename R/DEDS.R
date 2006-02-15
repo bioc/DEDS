@@ -74,11 +74,12 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   ############### original data
   t.o <- applyTest(X)
   colnames(t.o) <- names(testfun)
-  if (tail=="abs") t <- abs(t.o)
-  E <- apply(t,2, func.max)
+  tO <- t.o
+  if (tail=="abs") tO <- abs(t.o)
+  E <- apply(tO,2, func.max)
   cat("E of the original data is: ", E, "\n")
   if (adj.dist) {
-    wval <- apply(t, 2, mad, na.rm=TRUE)
+    wval <- apply(tO, 2, mad, na.rm=TRUE)
     wval <- 1/(wval^2)
   }
   else wval <- rep(1, nT)
@@ -101,7 +102,7 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   cat("distance to this extreme point will be measured ...\n")
   
   ################## compute distance to E
-  geneOrder <- order(euclidean(t, E, wval))
+  geneOrder <- order(euclidean(tO, E, wval))
   for (i in 1:(B+1)) 
     bD <- cbind(bD, euclidean(BT[[i]], E, wval))
   p <- func.compute.p(bD=bD[,-1], D=bD[,1], geneOrder-1, K=nsig)
