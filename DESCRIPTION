@@ -15,4 +15,5 @@ Description: This library contains functions that calculate various
 Maintainer: Yuanyuan Xiao <yxiao@itsa.ucsf.edu>
 Depends: R (>= 1.7.0), methods
 License: LGPL
+biocViews: Statistics, Microarray, DifferentialExpression
 
