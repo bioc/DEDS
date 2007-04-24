@@ -1,7 +1,7 @@
 Package: DEDS
 Title: Differential Expression via Distance Summary for Microarray
         Data
-Version: 1.8.0
+Version: 1.9.0
 Author: Yuanyuan Xiao <yxiao@itsa.ucsf.edu>, Jean Yee Hwa Yang
         <jean@biostat.ucsf.edu>
 Description: This library contains functions that calculate various
