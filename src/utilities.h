@@ -81,7 +81,7 @@ float dpowern(float n, int k);
 float mad(float *X, int n);
 float trigammaInverse(float x);
 void fitFDist(float *sigma2, int *df1, int n, float *scale, float *df2);
-void inv_chol(double *x, int *nr, int *nc, double *v, int *info);
+//void inv_chol(double *x, int *nr, int *nc, double *v, int *info);
 float tmixture(float *t, int n, float *std, float *df, float proportion, float c0lim);
 /*********************************************************************/
 /*               format input data                                   */

@@ -34,7 +34,7 @@ comp.modF(L = NULL)
  }
 
 \references{
-  Lönnstedt, I. and Speed, T. P. (2002). Replicated microarray
+  Lonnstedt, I. and Speed, T. P. (2002). Replicated microarray
   data. \emph{Statistica Sinica} \bold{12}, 31-46.
   
   Smyth, G. K. (2003). Linear models and empirical Bayes methods for

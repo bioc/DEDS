@@ -1,6 +1,5 @@
 \name{comp.stat}
 \alias{comp.stat}
-
 \title{Computing Test Statistics for Differential Expression}
 \description{
   This function computes test statistics, e.g., t-statitics, F-statistics, 
@@ -70,7 +69,7 @@ comp.stat(X, L, test = c("t", "fc", "sam", "f", "modt", "modf", "B"), extra = NU
 \references{
   For references on B-statistics and moderated t and F statistics:
   
-  Lönnstedt, I. and Speed, T. P. (2002). Replicated microarray
+  Lonnstedt, I. and Speed, T. P. (2002). Replicated microarray
   data. \emph{Statistica Sinica} \bold{12}, 31-46.
   
   Smyth, G. K. (2003). Linear models and empirical Bayes methods for

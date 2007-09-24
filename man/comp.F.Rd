@@ -25,7 +25,7 @@ comp.F(L = NULL)
 }
 
 \author{Yuanyuan Xiao, \email{yxiao@itsa.ucsf.edu}, \cr
-  Jean Yee Hwa Yang, \email{jean@biostat.ucsf.edu}.
+  Jean Yee Hwa Yang, \email{jeany@maths.usyd.edu.au}.
   }
 
 \seealso{\code{\link{comp.FC}}, \code{\link{comp.t}}}

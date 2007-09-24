@@ -590,7 +590,8 @@ void compute_sam2_stat_q(GENE_DATA *pdata, int *L, float *T, const void *extra)
   quantile(denum, nrow, &q, 1, &s0);
   
   for (i=0;i<nrow;i++) {
-    if (denum[i]==NA_REAL) T[i]=NA_REAL;
+    /*    if (denum[i]==NA_REAL) T[i]=NA_REAL;*/
+    if (ISNA(denum[i])) T[i]=NA_REAL;
     else T[i]=num[i]/(s0+denum[i]);
   }
 
@@ -644,7 +645,8 @@ void compute_sam1_stat_q(GENE_DATA *pdata, int *L, float *T, const void *extra)
   }
   quantile(denum, nrow, &q, 1, &s0);
   for (i=0;i<nrow;i++) {
-    if (denum[i]==NA_REAL) T[i]=NA_REAL;
+    /*if (denum[i]==NA_REAL) T[i]=NA_REAL;*/
+    if (ISNA(denum[i])) T[i]=NA_REAL;
     else T[i]=num[i]/(s0+denum[i]);
   }
 
@@ -786,21 +788,21 @@ float f_stat(const float *Y, const int *L, const int n, const void *extra)
 /*void F77_NAME(ch2inv)(double *x, int *ldx, int *n, double *v, int *info);
   void F77_NAME(chol)(double *a, int *lda, int *n, double *v, int *info);*/
 
-void inv_chol(double *x, int *nr, int *nc, double *v, int *info)
-{
-  double *dx;
-  int n=*nr;
-  
-  if((*nr)!=(*nc)) error("non-square matrix");
-  assert(dx=(double *)malloc(sizeof(double)*n*n));
-  memset(dx, 0, sizeof(double)*n*n);
-
-  /* do choleski decomposition */
-  F77_CALL(chol)(x, &n, &n, dx, info);
-  /* do inverse of choleski decomposition */
-  F77_CALL(ch2inv)(dx, &n, &n, v, info);
- 
-}
+//void inv_chol(double *x, int *nr, int *nc, double *v, int *info)
+//{
+//a  double *dx;
+//  int n=*nr;
+//  
+//  if((*nr)!=(*nc)) error("non-square matrix");
+//  assert(dx=(double *)malloc(sizeof(double)*n*n));
+//  memset(dx, 0, sizeof(double)*n*n);
+//
+//  /* do choleski decomposition */
+//  F77_CALL(chol)(x, &n, &n, dx, info);
+//  /* do inverse of choleski decomposition */
+//  F77_CALL(ch2inv)(dx, &n, &n, v, info);
+// 
+// }
 
 void t2_mod_stat_func(GENE_DATA *pdata, int *L, TMOD_DATA *ptmod)
 {
@@ -1058,10 +1060,10 @@ void testtmixture(float *t, int *n, float *std, float *df, float *proportion, fl
 float tmixture(float *t, int n, float *std, float *df, float proportion, float c0lim)
 {
   int i, total=0, *dt, ntarget;
-  float *n_t, *n_std, *n_df,  res;
+  float *n_t, *n_std, *n_df, res;
 
   assert(dt=(int *)malloc(sizeof(int)*n));
- 
+
   for(i=0;i<n;i++) {
     if(R_FINITE(t[i])) {
       dt[total]=i;

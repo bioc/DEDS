@@ -1,6 +1,5 @@
 \name{comp.B}
 \alias{comp.B}
-
 \title{Computing B-statistics for Differential Expression}
 \description{
   \code{comp.B} returns a function of one argument with bindings for
@@ -35,17 +34,17 @@ comp.B(L = NULL, proportion = 0.01)
   B  statistics for each row of the matrix.
 }
 \references{
-  Lönnstedt, I. and Speed, T. P. (2002). Replicated microarray
-  data. \emph{Statistica Sinica} \bold{12}, 31-46.
+  Lonnstedt, I. and Speed, T. P. (2002). Replicated microarray
+  data. \emph{Statistica Sinica} 12, 31-46.
   
-  Smyth, G. K. (2003). Linear models and empirical Bayes methods for
+   Smyth, G. K. (2003). Linear models and empirical Bayes methods for
   assessing differential expression in microarray
   experiments. http://www.statsci.org/smyth/pubs/ebayes.pdf
 }
 
 \author{
   Yuanyuan Xiao, \email{yxiao@itsa.ucsf.edu}, \cr
-  Jean Yee Hwa Yang, \email{jean@biostat.ucsf.edu}.
+  Jean Yee Hwa Yang, \email{jeany@maths.usyd.edu.au}.
 }
 
 \seealso{\code{\link{comp.modt}},\code{\link{comp.stat}}.}
