@@ -114,7 +114,7 @@ deds.stat <- function(X, L, B=1000, testfun=list(t=comp.t(L), fc=comp.FC(L), sam
   return(res)
 }
 
-Deds.stat.linkC <- function(X, L, B=1000, tests=c("t", "fc", "sam"),
+deds.stat.linkC <- function(X, L, B=1000, tests=c("t", "fc", "sam"),
                                 tail=c("abs", "lower", "higher"),
                                 extras=NULL,
                                 distance=c("weuclid", "euclid"), adj=c("fdr", "adjp"),
