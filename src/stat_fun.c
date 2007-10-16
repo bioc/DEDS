@@ -1082,7 +1082,7 @@ float tmixture(float *t, int n, float *std, float *df, float proportion, float c
    
   ntarget=(int)ceil((double)proportion/2*total);
    Rprintf("%d ", ntarget);
-   if(ntarget<1) res <- NA_REAL;
+   if(ntarget<1) res=NA_REAL;
    else {
      float mc0=0, *ttop, *c1, *df1, *c0, qtarget;
      double *p0, *ptarget;
