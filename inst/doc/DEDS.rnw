@@ -395,7 +395,7 @@ Tusher, V.~G., Tibshirani, R., and Chu, G. (2001).
   responses to ionizing radiation.
 \newblock {\em Proc. Natl. Acad. Sci.}, 98:5116--5121.
 
-\bibitem[Yang et~al., 2004]{DEDS}
+\bibitem[Yang et~al, 2004]{DEDS}
 Yang, Y.~H., Xiao, Y., and Segal, M. (2004).
 \newblock Indentifying differentially expressed genes from micorray experiments via 
   statistic synthesis.
@@ -405,5 +405,3 @@ Yang, Y.~H., Xiao, Y., and Segal, M. (2004).
 
 
 \end{document}
-
-
