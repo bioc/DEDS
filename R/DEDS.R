@@ -1071,7 +1071,7 @@ hist.DEDS <- function(x, subset=c(1:nrow(x$stats)), ...) {
   par(mfrow=c(2, floor((nP+1)/2)))
   for(i in 1:nP) {
     p <- ps[,i]
-    do.call("hist", c(list(x=p, xlab=xlabs[i], nclass=nclass, col=col,
+    do.call(hist, c(list(x=p, xlab=xlabs[i], nclass=nclass, col=col,
                            border=border, main=main), args))
     #hist(p, xlab = xlabs[i], nclass = nclass, col = col, border = border, cex = cex, main=main, ...)
     abline(h=nrow(p)/50, col="black", lwd=4, lty=2)
