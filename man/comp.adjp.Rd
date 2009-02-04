@@ -51,7 +51,7 @@ comp.adjp(X, L, B = 1000, test = c("t", "fc", "sam", "f", "modt", "modf"), tail 
     \code{\link{deds.genExtra}}.}
 }
 \details{
-  see code{\link[multtest]{mt.maxT}}.
+  see \code{\link[multtest]{mt.maxT}}.
 }
 \value{
   A matrix of the following columns:

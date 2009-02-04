@@ -22,19 +22,21 @@ comp.ebayes(L = NULL, proportion = 0.01)
   \item{proportion}{A numeric variable specifying the proportion of
     differential expression.}
 }
+
 \details{
    The function returned by \code{comp.ebayes} calculates B statistics
    and moderated t statistics for each row of the microarray data
    matrix, with bindings for \code{L} and \code{proportion}. It
    interfaces to a C function. 
 }
+
 \value{
   \code{comp.ebayes} returns a function (F) with the bindings for
   \code{L} and \code{proportion} . The function F when supplied with
   a microarray data matrix and evaluated will return a matrix of two
   columns:
   \item{t}{Moderated t statistics}
-  \item{B}{B statistics (log-odds) of differential expression}}
+  \item{B}{B statistics (log-odds) of differential expression}
 }
 
 \references{
