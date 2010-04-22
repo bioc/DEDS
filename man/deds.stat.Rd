@@ -1,7 +1,7 @@
 \name{deds.stat}
 \alias{deds.stat}
 
-\title{Differentail Expression via Distance Summary of Multiple Statistics}
+\title{Differential Expression via Distance Summary of Multiple Statistics}
 \description{
   \code{deds.stat} integrates different statistics of differential
   expression (DE) to rank and select a set of DE genes. 

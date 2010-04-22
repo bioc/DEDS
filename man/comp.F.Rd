@@ -4,7 +4,7 @@
 \description{
   \code{comp.F} returns a function of one argument with bindings for
   \code{L}. This function accepts a microarray data matrix as its single
-  argment, when evaluated, computes F statistics for each row of the
+  argument, when evaluated, computes F statistics for each row of the
   matrix.
 }
 

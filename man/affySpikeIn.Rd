@@ -26,7 +26,7 @@ at \url{http://www.affymetrix.com/analysis/download_center2.affx}. }
     rows correspond to genes (12626 genes) and columns to 24 samples.}
   \item{affySpikeIn.L}{numeric vector indicating the sample class, 12 (code 0)
     vs. 12 (code 1).}
-  \item{affySpikeIn.gnames}{character vecter containing the names of the
+  \item{affySpikeIn.gnames}{character vector containing the names of the
     12626 genes.}
   \item{spikedgene}{numeric vector given the location of the 14 spiked genes.}
 }

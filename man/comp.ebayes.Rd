@@ -6,9 +6,9 @@
 \description{
   \code{comp.ebayes} returns a function of one argument with bindings for
   \code{L} and \code{proportion}. This function accepts a microarray
-  data matrix as its single argment, when evaluated, computes lod-odds
+  data matrix as its single argument, when evaluated, computes lod-odds
   (B statistics) and moderated t statistics of differential expression
-  by emprical Bayes shrinkage of the standard error toward a common value. 
+  by empirical Bayes shrinkage of the standard error toward a common value. 
 }
 
 \usage{

@@ -28,12 +28,12 @@
   the function \code{\link{deds.pval}}. The list contains a "stat"
   component, which stores unadjusted p-values from various statistical
   models. The function \code{hist.DEDS} extracts the "stat" component
-  and produces a histgram of the unadjusted p-values for each model.
+  and produces a histogram of the unadjusted p-values for each model.
 
    For DEDS objects that are created by functions
    \code{\link{deds.stat}} and \code{\link{deds.stat.linkC}}, the "stat"
    matrix consists of different types of statistics. For graphical
-   dispaly of these statistics, the user can use \code{\link{qqnorm.DEDS}} and
+   display of these statistics, the user can use \code{\link{qqnorm.DEDS}} and
   \code{\link{pairs.DEDS}}.
 }
 

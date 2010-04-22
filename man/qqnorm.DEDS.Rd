@@ -24,11 +24,11 @@ xlab = "Quantiles of standard normal", thresh = 0.05, col = palette(), pch, ...)
   \item{thresh}{A numeric variable specifying the threshold of
     significance in differential expression (DE) for q- or 
     p-values of the DEDS object.}
-  \item{col}{A specificatio for the colors to be used for plotting. It
+  \item{col}{A specification for the colors to be used for plotting. It
     should have a length bigger than two. The first is used for points
-    with q- or adjusted p-values smaller than the specified threshould
+    with q- or adjusted p-values smaller than the specified threshold
     (group I) and the second for points with q- or adjusted p-values
-    bigger than the threshould (group II).}
+    bigger than the threshold (group II).}
   \item{pch}{A specification for the type of points to be used for
     plotting.  It should have a length bigger than two. The first
     parameter is used for group I genes, and the second for group II

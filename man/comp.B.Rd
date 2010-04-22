@@ -4,8 +4,8 @@
 \description{
   \code{comp.B} returns a function of one argument with bindings for
   \code{L} and \code{proportion}. This function accepts a microarray
-  data matrix as its single argment, when evaluated, computes lod-odds
-  of differential expression by emprical Bayes shrinkage of the standard
+  data matrix as its single argument, when evaluated, computes lod-odds
+  of differential expression by empirical Bayes shrinkage of the standard
   error toward a common value. The lod-odds are sometimes called B
   statistics. 
 }
@@ -24,7 +24,7 @@ comp.B(L = NULL, proportion = 0.01)
   The function returned by \code{comp.B} calculates B statistics for
   each row of the microarray data matrix, with bindings for \code{L} and
   \code{proportion}. It interfaces to a C function. \code{\link{comp.stat}}
-  is another function that wrapps around the same C function that could
+  is another function that wraps around the same C function that could
   be used for computing B statistics (see examples below).
 }
 \value{

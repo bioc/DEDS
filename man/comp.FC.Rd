@@ -5,7 +5,7 @@
 \description{
   \code{comp.FC} returns a function of one argument with bindings for
   \code{L}, \code{is.log} and \code{FUN}. This function accepts a
-  microarray data matrix as its single argment, when evaluated, computes
+  microarray data matrix as its single argument, when evaluated, computes
   fold change for each row of the matrix.
 }
 
@@ -18,7 +18,7 @@ comp.FC(L = NULL, is.log = TRUE, FUN = mean)
     between 0 and \eqn{k-1}.}
   \item{is.log}{A logical variable indicating whether the data has been
     logged.}
-  \item{FUN}{The summary statistics function used to calcuate fold
+  \item{FUN}{The summary statistics function used to calculate fold
     change, the default is set as \code{\link{mean}}, the user can also
     use \code{\link{median}}}.
 }
@@ -26,7 +26,7 @@ comp.FC(L = NULL, is.log = TRUE, FUN = mean)
 \details{
   The function returned by \code{comp.FC} calculates fold change for each row
   of the matrix, given specific class labels. If \code{is.log=TRUE},
-  fold change is calculated by substraction; if \code{is.log=FALSE},
+  fold change is calculated by subtraction; if \code{is.log=FALSE},
   fold change is calculated by division. 
 }
 \value{

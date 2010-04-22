@@ -5,7 +5,7 @@
 \description{
   \code{comp.modF} returns a function of one argument with bindings for
   \code{L}. The function accepts a microarray data matrix as its single
-  argument, when evaluated, computes moderated F-statistics by emprical
+  argument, when evaluated, computes moderated F-statistics by empirical
   Bayes shrinkage of the standard error toward a common value.
 }
 
@@ -22,7 +22,7 @@ comp.modF(L = NULL)
   The function returned by \code{comp.modF} computes moderated F
   statistics for the assessment of differential expression. It
   interfaces to a C function. \code{\link{comp.stat}} is another
-  function that wrapps around the C function that could be used for
+  function that wraps around the C function that could be used for
   computing moderated F statistics. For details of moderated statistics,
   see Smyth (2003). 
 }

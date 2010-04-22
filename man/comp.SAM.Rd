@@ -29,12 +29,12 @@ deltas, s.step=0.01, alpha.step=0.01, plot.it=FALSE)
     are calculated and returned; if \code{FALSE}, false discovery rates
     (FDRs) for a set of \eqn{\delta}{delta}(\code{deltas}) are
     calculated and returned.}
-  \item{verbose}{A logical variable, if \code{TRUE}, informative mesages
+  \item{verbose}{A logical variable, if \code{TRUE}, informative messages
     are printed during the computation process.}
   \item{deltas}{A vector of values for the threshold \eqn{\delta}{delta}; see
     Tusher et al.}
   \item{s.step}{A numeric variable specifying the size of the moving window
-    acorss the gene-wise standard deviations for the selection of the
+    across the gene-wise standard deviations for the selection of the
     fudge factor \eqn{s_0}.}
   \item{alpha.step}{A numeric variable specifying the increment of
     a percentile sequence between 0 and 1, from which the fudge factor

@@ -52,7 +52,7 @@ length(levels(groups)) > 1, ...)
     p-values of the DEDS object; default is set at 0.05. If 
     \code{thresh}>1, it specifies the number of top DE genes to be
     highlighted. }
-  \item{reg.line}{A function name specifying the type of regressio line
+  \item{reg.line}{A function name specifying the type of regression line
     to be plotted in the scatter plots. If \code{reg.line=lm},
     linear regression line will be plotted; If \code{reg.line=NULL}, no
     regression line will be plotted in the scatter plot.}
@@ -62,7 +62,7 @@ length(levels(groups)) > 1, ...)
   \item{line.by.group}{A logical variable specifying if the regression
     lines should be applied within groups.}
   \item{diag.by.group}{A logical variable specifying if the plot in the diagonal
-    panels whould be applied groupwise.}
+    panels would be applied groupwise.}
   \item{lower.by.group}{A logical variable, if
     \code{lower.by.group=TRUE} and \code{lower="cor"}, correlation
     coefficients will be calculated and printed separated according to

@@ -5,7 +5,7 @@
 \description{
   \code{comp.modt} returns a function of one argument with bindings for
   \code{L}. This function accepts a microarray data matrix as its single
-  argment, when evaluated, computes moderated t-statistics by emprical Bayes
+  argument, when evaluated, computes moderated t-statistics by empirical Bayes
   shrinkage of the standard error toward a common value.
 }
 
@@ -21,7 +21,7 @@ comp.modt(L = NULL)
   The function returned by \code{comp.modt} computes moderated t
   statistics for the assessment of differential expression. It
   interfaces to a C function. \code{\link{comp.stat}} is another
-  function that wrapps around the same C function that could be used for
+  function that wraps around the same C function that could be used for
   computing moderated t statistics. For details of moderated statistics,
   see Smyth (2003). 
 }

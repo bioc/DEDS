@@ -3,10 +3,10 @@
 
 \title{Computing permutation based step-down maxT adjusted p values for each row of a matrix}
 \description{
-  This function computes permuation based step-down maxT adjusted p values for a
+  This function computes permutation based step-down maxT adjusted p values for a
   selected test statistic, e.g., one- or two-sample
-  t-statitics, F-statistics, SAM, Fold change, moderated t-statistics
-  and moderated F-statisitcs, for each row of a matrix. The procedure is
+  t-statistics, F-statistics, SAM, Fold change, moderated t-statistics
+  and moderated F-statistics, for each row of a matrix. The procedure is
   based on codes from \code{\link[multtest]{mt.maxT}} and described in
   Westfall & Young (1993).
 }

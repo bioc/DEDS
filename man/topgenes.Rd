@@ -14,7 +14,7 @@ topgenes(obj, number = 10, genelist = NULL, sort.by = c("deds", colnames(obj$sta
   \item{obj}{An object of \code{\link{DEDS}}}
   \item{number}{A numeric variable specifying the number of top genes to
     be printed out.}
-  \item{genelist}{A dataframe or a vector containing gene names.}
+  \item{genelist}{A data.frame or a vector containing gene names.}
   \item{sort.by}{A character string specifying the name of the
     statistic to sort genes by. The default uses the DEDS result, the
     user can also choose from the names of the statistics (or unadjusted
@@ -39,7 +39,7 @@ topgenes(obj, number = 10, genelist = NULL, sort.by = c("deds", colnames(obj$sta
 }
 
 \value{
-  A dataframe with rows for selected genes, and columns for the
+  A data.frame with rows for selected genes, and columns for the
   "stat" matrix and q- or adjusted p-values from DEDS.
 }
 

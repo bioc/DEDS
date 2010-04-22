@@ -19,9 +19,9 @@ deds.pval(X, E = rep(0, ncol(X)), adj = c("fdr", "adjp"), B = 200, nsig = nrow(X
     \eqn{p} values in the direction of differential expression.}
   \item{adj}{A character string specifying the type of multiple testing
     adjustment. \cr
-    If \code{adj="fdr"}, False Discovery Rate is controled and q values
+    If \code{adj="fdr"}, False Discovery Rate is controlled and q values
     are returned. \cr
-    If \code{adj="adjp"}, ajusted \eqn{p} values that controls family wise
+    If \code{adj="adjp"}, adjusted \eqn{p} values that controls family wise
       type I error rate is returned.}
   \item{B}{The number of permutations. For a complete enumeration,
       \code{B} should be 0 (zero) or any number not less than the total

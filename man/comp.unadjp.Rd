@@ -3,9 +3,9 @@
 
 \title{Computing permutation based unadjusted p values for each row of a matrix}
 \description{
-  This function computes permuation based unadjusted p values for a
+  This function computes permutation based unadjusted p values for a
   selected test statistic, e.g., one- or two-sample
-  t-statitics, F-statistics, SAM, Fold change, for each row of a matrix.
+  t-statistics, F-statistics, SAM, Fold change, for each row of a matrix.
 }
 
 \usage{

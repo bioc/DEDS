@@ -2,7 +2,7 @@
 \alias{comp.stat}
 \title{Computing Test Statistics for Differential Expression}
 \description{
-  This function computes test statistics, e.g., t-statitics, F-statistics, 
+  This function computes test statistics, e.g., t-statistics, F-statistics, 
   SAM, fold changes, moderated t or F statistics, B statistics, 
   for each row of a microarray data matrix.
 }

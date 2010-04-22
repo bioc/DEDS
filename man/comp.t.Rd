@@ -5,7 +5,7 @@
 \description{
   \code{comp.t} returns a function of one argument with bindings for
   \code{L}, \code{mu}, \code{var.equal}. This function accepts a
-  microarray data matrix as its single argment, when evaluated, computes
+  microarray data matrix as its single argument, when evaluated, computes
   t statistics for each row of the matrix.
 }
 

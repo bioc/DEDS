@@ -4,9 +4,9 @@
 \title{Computing permutation based q values controlling false discovery
   rate for each row of a matrix}
 \description{
-  This function computes permuation based q values for a selected test
-  statistic, e.g., one- or two-sample t-statitics, F-statistics, SAM,
-  Fold change, moderated t-statistics and moderated F-statisitcs, for
+  This function computes permutation based q values for a selected test
+  statistic, e.g., one- or two-sample t-statistics, F-statistics, SAM,
+  Fold change, moderated t-statistics and moderated F-statistics, for
   each row of a matrix. 
 }
 

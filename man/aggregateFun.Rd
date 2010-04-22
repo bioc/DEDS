@@ -4,7 +4,7 @@
 \title{Aggregate Statistical Functions for DEDS}
 \description{
   This function takes statistic functions and  creates a
-  function that takes a matrix as a single argument. The statisic
+  function that takes a matrix as a single argument. The statistic
   functions are bound in the environment of the returned function and
   are applied sequentially to the argument of the returned function.
 }
@@ -25,7 +25,7 @@ aggregateFun(...)
 \value{
   It returns a function that takes a matrix as its single argument. The
   function returns a matrix of statistics, with \eqn{m} rows
-  correspondign to variables (hypotheses) and \eqn{n} columns
+  corresponding to variables (hypotheses) and \eqn{n} columns
   corresponding to specified statistics.
 }
 
