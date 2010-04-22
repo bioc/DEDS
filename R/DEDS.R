@@ -1,10 +1,3 @@
-###########################################################################
-## Set Class
-#require(methods)
-#.initDEDS <- function(where) {
-#setClass("DEDS", representation("list"), where=where)
-#}
-
 ############################
 ## using p values from different meausres
 ## X -- matrix of p values from different measures
@@ -1076,10 +1069,4 @@ hist.DEDS <- function(x, subset=c(1:nrow(x$stats)), ...) {
     #hist(p, xlab = xlabs[i], nclass = nclass, col = col, border = border, cex = cex, main=main, ...)
     abline(h=nrow(p)/50, col="black", lwd=4, lty=2)
   }
-}
-    
-##########################################################################
-.First.lib <- function(libname, pkgname) {
-    require(methods)
-    library.dynam("DEDS", pkgname, libname)
 }

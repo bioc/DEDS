@@ -1,0 +1,16 @@
+useDynLib(DEDS)
+
+importFrom(graphics, abline, boxplot, hist, legend, lines,
+           pairs.default, par, plot, points, text)
+importFrom(grDevices, palette)
+importFrom(stats, cor, density, lm, lowess, mad, median, na.omit,
+           qqline, qqnorm, quantile, runif, sd, var)
+
+export(aggregateFun, comp.adjp, comp.B, comp.ebayes, comp.F, comp.FC,
+       comp.fdr, comp.modF, comp.modt, comp.SAM, comp.stat, comp.t,
+       comp.unadjp, deds.calcAdjP, deds.calcFDR, deds.checkB,
+       deds.checkclasslabel, deds.checkothers, deds.checkX,
+       deds.chooseTest, deds.genExtra, deds.next.sample, deds.pval,
+       deds.stat, deds.stat.linkC, euclidean, hist.DEDS, pairs.DEDS,
+       qqnorm.DEDS, sam.fdr, sam.multiclass.func, sam.oneclass.func,
+       sam.s0, sam.twoclass.func, test.checkX, topgenes, type2test)

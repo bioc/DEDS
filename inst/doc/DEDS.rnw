@@ -3,7 +3,7 @@
 % likely to be overwritten.
 %
 % \VignetteIndexEntry{DEDS Overview}
-% \VignetteDepends{methods, DEDS}
+% \VignetteDepends{DEDS}
 % \VignetteKeywords{Differential Expression Analysis}
 % \VignettePackage{DEDS}
 \documentclass[11pt]{article}
@@ -77,9 +77,10 @@ F and $t$ statisitcs (\cite{limma}), for the analysis of DE in microarrys. \\
 two microarray experiments: Affymetrix spike-in (\cite{Irizarryetal03}) and ApoA1
 (\cite{Dudoitetal02}). \\
 
-{\bf Related packages in Bioconductor.} The Bioconductor packages \code{marrayClasses}, \code{marrayInput} and \code{marrayNorm} 
-provide functions for reading and normalizing spotted microarray data. The package 
-\code{affy} provides functions for reading and normalizing Affymetrix microarray data.\\
+{\bf Related packages in Bioconductor.} The Bioconductor packages \code{marrayClasses},
+\code{marrayInput} and \code{marrayNorm}  provide functions for reading and
+normalizing spotted microarray data. The package  \code{affy} provides functions
+for reading and normalizing Affymetrix microarray data.\\
 
 {\bf Help files.}  As with any R package, detailed information on functions, classes and 
 methods can be obtained in the help files. For instance, to view the help file for the 
@@ -90,7 +91,7 @@ function \Rfunc{comp.FC} in a browser, use \code{help.start()} followed by \code
 \section{Case study 1: Affymetrix Spike-in Experiment}
 We demonstrate the functionality of this package using gene expression
 data from the Affymetrix spike-in experiment. To load the dataset, use
-\code{data(affySpikeIn)}, and to view a description of the experiements
+\code{data(affySpikeIn)}, and to view a description of the experiments
 and data, type \code{?affySpikeIn}.
 
 % begin code ----------------------------------------
@@ -142,8 +143,9 @@ The \Rfunc{deds.stat.linkC} and \Rfunc{deds.stat} functions are the main
 functions that carry out the DEDS procedure. The former wraps around a
 C function and is therefore quicker than the latter; the latter does the 
 computation solely in R and is slower but is more flexible in fine-tuning parameters
-for statisital measures. The user is recommended to use \Rfunc{deds.stat.linkC}
-for efficiency purpose. We describe the most important arguments in the function \Rfunc{deds.stat.linkC} below (see also \code{?deds.stat.linkC}):
+for statistical measures. The user is recommended to use \Rfunc{deds.stat.linkC}
+for efficiency purpose. We describe the most important arguments in the function
+\Rfunc{deds.stat.linkC} below (see also \code{?deds.stat.linkC}):
 \begin{description}
   \item{\code{X}: }{A  matrix, in the case of gene expression data, 
     rows correspond to $N$ genes and columns to $p$ mRNA samples.}
@@ -161,9 +163,9 @@ for efficiency purpose. We describe the most important arguments in the function
  \item{\code{tail}: }{ A character string specifying the type of rejection
     region; choices include \code{``abs''}, \code{``higher''} and \code{``lower''}.}
  \item{\code{adj}: }{ A character string specifying the type of multiple testing
-    adjustment; choices include \code{``fdr''} for returning $q$ values controling False 
+    adjustment; choices include \code{``fdr''} for returning $q$ values controlling False 
     Discovery Rate (FDR; see \cite{Benjamini&Hochberg95}) and \code{``adjp''}
-    for adjusted $p$ values (see \cite{Dudoit&Shaffer02}) controling family wise type I error rate.} 
+    for adjusted $p$ values (see \cite{Dudoit&Shaffer02}) controlling family wise type I error rate.} 
  \item{\code{nsig}: }{ If \code{adj = ``fdr''}, \code{nsig} specifies the number of top
     differentially expressed genes whose $q$ values will be calculated; we recommend 
     setting \code{nsig < N}, as the computation of $q$ values will be extensive. $q$ values
@@ -218,7 +220,7 @@ qqnorm(deds.affy, subset=c(2:12626), thresh=0.01)
 The next example we demonstrate is a set of cDNA microarray data from a study of a
 mouse model with very low HDL cholesterol levels described in
 \cite{Dudoitetal02}. To load the dataset, use
-\code{data(ApoA1)}, and to view a description of the experiements
+\code{data(ApoA1)}, and to view a description of the experiments
 and data, type \code{?ApoA1}.
 
 % begin code ----------------------------------------
@@ -310,7 +312,7 @@ three arguments (see also {\tt ?comp.t}):
 \end{description}
 {\tt comp.t} returns a function of one argument with bindings for
 {\tt L}, {\tt mu} and {\tt var.equal}. This function accepts a
-microarray data matrix as its single argment, when evaluated, computes
+microarray data matrix as its single argument, when evaluated, computes
 $t$ statistic for each row of the matrix.
 
 <<tstat,echo=TRUE,eval=FALSE,results=hide>>=
@@ -397,7 +399,7 @@ Tusher, V.~G., Tibshirani, R., and Chu, G. (2001).
 
 \bibitem[Yang et~al, 2004]{DEDS}
 Yang, Y.~H., Xiao, Y., and Segal, M. (2004).
-\newblock Indentifying differentially expressed genes from micorray experiments via 
+\newblock Identifying differentially expressed genes from microarray experiments via 
   statistic synthesis.
 \newblock {\em Manuscript in preparation.}
 

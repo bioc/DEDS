@@ -13,6 +13,6 @@ Description: This library contains functions that calculate various
         expressed genes by integrating and summarizing a set of
         statistics using a weighted distance approach.
 Maintainer: Yuanyuan Xiao <yxiao@itsa.ucsf.edu>
-Depends: R (>= 1.7.0), methods
+Depends: R (>= 1.7.0)
 License: LGPL
 biocViews: Bioinformatics, Microarray, DifferentialExpression
