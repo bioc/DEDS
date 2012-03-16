@@ -6,8 +6,8 @@ void malloc_gene_data(GENE_DATA *pdata)
   int nrow=pdata->nrow;
   int ncol=pdata->ncol;
   
-  assert(pdata->d=(float **)malloc(sizeof(float*)*nrow));
-  assert(pdata->L=(int*)malloc(sizeof(int)*ncol));
+  pdata->d=(float **)malloc(sizeof(float*)*nrow);
+  pdata->L=(int*)malloc(sizeof(int)*ncol);
 
   /*initialization*/
   memset(pdata->L,0,sizeof(int)*ncol);
@@ -15,7 +15,7 @@ void malloc_gene_data(GENE_DATA *pdata)
     pdata->L[i]=0;
 
   for (i=0; i<nrow; i++) {
-    assert(pdata->d[i]=(float *) malloc(sizeof(float)*ncol));
+    pdata->d[i]=(float *) malloc(sizeof(float)*ncol);
   }
 }
 
@@ -80,14 +80,14 @@ void create_deds_res(int *pnrow, int *pnsig, int *pnT, DEDS_RES *pdr)
   pdr->nsig=*pnsig;
   pdr->nT=*pnT;
 
-  assert(pdr->R=(int *)malloc(sizeof(int)*(*pnrow)));
-  assert(pdr->E=(float *)malloc(sizeof(float)*(*pnT)));
-  assert(pdr->D=(float *)malloc(sizeof(float)*(*pnrow)));
-  assert(pdr->wval=(float *)malloc(sizeof(float)*(*pnT)));
-  assert(pdr->FDR=(double *)malloc(sizeof(double)*(*pnrow)));
-  assert(pdr->T=(float **)malloc(sizeof(float *)*(*pnrow)));
+  pdr->R=(int *)malloc(sizeof(int)*(*pnrow));
+  pdr->E=(float *)malloc(sizeof(float)*(*pnT));
+  pdr->D=(float *)malloc(sizeof(float)*(*pnrow));
+  pdr->wval=(float *)malloc(sizeof(float)*(*pnT));
+  pdr->FDR=(double *)malloc(sizeof(double)*(*pnrow));
+  pdr->T=(float **)malloc(sizeof(float *)*(*pnrow));
   for(i=0;i<(*pnrow);i++)
-    assert(pdr->T[i]=(float *)malloc(sizeof(float)*(*pnT)));
+    pdr->T[i]=(float *)malloc(sizeof(float)*(*pnT));
   
 }
  
@@ -108,10 +108,10 @@ void create_tmod_data(int *pnrow, TMOD_DATA *ptmod)
 {
   ptmod->nrow=*pnrow;
   
-  assert(ptmod->mean=(float *)malloc(sizeof(float)*(*pnrow)));
-  assert(ptmod->sigma2=(float *)malloc(sizeof(float)*(*pnrow)));
-  assert(ptmod->df_resid=(int *)malloc(sizeof(int)*(*pnrow)));
-  assert(ptmod->stdev_unscale=(float *)malloc(sizeof(float)*(*pnrow)));
+  ptmod->mean=(float *)malloc(sizeof(float)*(*pnrow));
+  ptmod->sigma2=(float *)malloc(sizeof(float)*(*pnrow));
+  ptmod->df_resid=(int *)malloc(sizeof(int)*(*pnrow));
+  ptmod->stdev_unscale=(float *)malloc(sizeof(float)*(*pnrow));
     
 }
  
@@ -135,7 +135,7 @@ void sort_gene_data(GENE_DATA* pdata,int*R)
 {
   int i,nrow=pdata->nrow;
   float** old_d;  /*th old addresses of the gene data*/
-  assert(old_d=(float**)malloc(sizeof(float*)*nrow));
+  old_d=(float**)malloc(sizeof(float*)*nrow);
   /*store the original pointers from pdata*/ 
   for(i=0;i<nrow;i++)
     {
@@ -159,7 +159,7 @@ void sort_vector(float* V,int*R,int n)
 {
   float* old_V;
   int i;
-  assert(old_V=(float*)malloc(sizeof(float)*n));
+  old_V=(float*)malloc(sizeof(float)*n);
   for(i=0;i<n;i++)
     old_V[i]=V[i];
   for(i=0;i<n;i++)

@@ -20,7 +20,7 @@ void creat_sampling(int n, int *L, int B)
   l_b=0;
   
   /* initialize l_L which stores the original label L */
-  assert(l_L=(int *)malloc(n*sizeof(int)));
+  l_L=(int *)malloc(n*sizeof(int));
   memcpy(l_L, L, sizeof(int)*n);
 
   /* calculate number of classes */
@@ -33,7 +33,7 @@ void creat_sampling(int n, int *L, int B)
   l_k=k;
   
   /* calculate number of cases in each class */
-  assert(l_nk=(int *)malloc(k*sizeof(int)));
+  l_nk=(int *)malloc(k*sizeof(int));
   memset(l_nk, 0, sizeof(int)*k);
   for (i=0;i<n;i++){
     l_nk[L[i]]++;
@@ -63,8 +63,8 @@ void creat_sampling(int n, int *L, int B)
     }*/
 
   /* initialize l_permun and l_ordern */
-  assert(l_permun=(int *)malloc(n*sizeof(int)));
-  assert(l_ordern=(int *)malloc(n*sizeof(int)));
+  l_permun=(int *)malloc(n*sizeof(int));
+  l_ordern=(int *)malloc(n*sizeof(int));
   for (i=0;i<n;i++)
     l_ordern[i]=i;
 

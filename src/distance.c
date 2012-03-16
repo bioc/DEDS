@@ -3,7 +3,7 @@ float mad(float *X, int n)
 {
   int i;
   float med, res, *ad;
-  assert(ad=(float *)malloc(sizeof(float)*n));
+  ad=(float *)malloc(sizeof(float)*n);
 
   med=median(X, n);
     
@@ -23,9 +23,9 @@ void compute_euclid(float **X, int nrow, int ncol, float *E, float *wval, float 
   float dev, *D;
   int i, j, *count;
 
-  assert(count=(int *)malloc(nrow*sizeof(int)));
+  count=(int *)malloc(nrow*sizeof(int));
   memset(count, 0, nrow*sizeof(int));
-  assert(D=(float *)malloc(nrow*sizeof(float)));
+  D=(float *)malloc(nrow*sizeof(float));
   memset(D, 0, nrow*sizeof(float));
     
   
@@ -57,7 +57,7 @@ void order_index(float *V,int *R,int n)
   int i;
   float *oV;
 
-  assert(oV=(float *)malloc(sizeof(float)*n));
+  oV=(float *)malloc(sizeof(float)*n);
 
   for(i=0;i<n;i++){
     R[i]=i;

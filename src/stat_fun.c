@@ -26,11 +26,11 @@ void get_unadjp(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, c
   int i;
   int *count, *total;
   
-  assert(TB=(float *)malloc(sizeof(float)*(*pnrow)));
-  assert(bL=(int *)malloc(sizeof(int)*(*pncol)));
-  assert(count=(int *)malloc(sizeof(int)*(*pnrow)));
+  TB=(float *)malloc(sizeof(float)*(*pnrow));
+  bL=(int *)malloc(sizeof(int)*(*pncol));
+  count=(int *)malloc(sizeof(int)*(*pnrow));
   memset(count, 0, sizeof(int)*(*pnrow));
-  assert(total=(int *)malloc(sizeof(int)*(*pnrow)));
+  total=(int *)malloc(sizeof(int)*(*pnrow));
   memset(total, 0, sizeof(int)*(*pnrow));
   
 
@@ -113,15 +113,15 @@ void get_adjp(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, flo
   int b, *bL, is_next, *total1, *total2;
   int i;
 
-  assert(BT=(float *)malloc(sizeof(float)*(*pnrow)));
-  assert(bL=(int *)malloc(sizeof(int)*(*pncol)));
-  assert(count1=(float*)malloc(sizeof(float)*(*pnrow)));
+  BT=(float *)malloc(sizeof(float)*(*pnrow));
+  bL=(int *)malloc(sizeof(int)*(*pncol));
+  count1=(float*)malloc(sizeof(float)*(*pnrow));
   memset(count1,0,sizeof(float)*(*pnrow)); 
-  assert(total1=(int*)malloc(sizeof(int)*(*pnrow)));
+  total1=(int*)malloc(sizeof(int)*(*pnrow));
   memset(total1,0,sizeof(int)*(*pnrow));
-  assert(count2=(float*)malloc(sizeof(float)*(*pnrow)));
+  count2=(float*)malloc(sizeof(float)*(*pnrow));
   memset(count2,0,sizeof(float)*(*pnrow)); 
-  assert(total2=(int*)malloc(sizeof(int)*(*pnrow)));
+  total2=(int*)malloc(sizeof(int)*(*pnrow));
   memset(total2,0,sizeof(int)*(*pnrow));
 
    /*comuter the original t-statfirst*/
@@ -230,16 +230,16 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
   int i,j;
   int total;
 
-  assert(BT=(float **)malloc(sizeof(float *)*(*B)));
+  BT=(float **)malloc(sizeof(float *)*(*B));
   for (i=0;i<(*B);i++) {
-    assert(BT[i]=(float *)malloc(sizeof(float)*(*pnrow)));
+    BT[i]=(float *)malloc(sizeof(float)*(*pnrow));
   }
-  assert(bL=(int *)malloc(sizeof(int)*(*pncol)));
-  assert(count1=(int*)malloc(sizeof(int)*(*pnrow)));
+  bL=(int *)malloc(sizeof(int)*(*pncol));
+  count1=(int*)malloc(sizeof(int)*(*pnrow));
   memset(count1,0,sizeof(int)*(*pnrow)); 
-  assert(total2=(int*)malloc(sizeof(int)*(*pnrow)));
+  total2=(int*)malloc(sizeof(int)*(*pnrow));
   memset(total2,0,sizeof(int)*(*pnrow));
-  assert(count2=(int*)malloc(sizeof(int)*(*pnrow)));
+  count2=(int*)malloc(sizeof(int)*(*pnrow));
   memset(count2,0,sizeof(int)*(*pnrow)); 
   
    /*compute the original t-statfirst*/
@@ -281,8 +281,8 @@ void get_fdr(double *d, int *pnrow, int *pncol, int *L, float *T, float *P, floa
     is_next=func_next_sample(bL);
   }
 
-  assert(junk=(float*)malloc(sizeof(float)*total));
-  assert(R1=(int*)malloc(sizeof(int)*total));
+  junk=(float*)malloc(sizeof(float)*total);
+  R1=(int*)malloc(sizeof(int)*total);
   for (i=0;i<(*B);i++){
     for (j=0;j<(*pnrow);j++){
       junk[i*(*pnrow)+j]=BT[i][j];
@@ -519,9 +519,9 @@ float fcm_stat(const float *Y, const int *L, const int n,  const void *extra)
   int i, class, *count;
   int nL=*(int *)extra;
  
-  assert(mean_na=(float *)malloc(nL*sizeof(float)));
+  mean_na=(float *)malloc(nL*sizeof(float));
   memset(mean_na, 0, nL*sizeof(float));
-  assert(count=(int *)malloc(nL*sizeof(int)));
+  count=(int *)malloc(nL*sizeof(int));
   memset(count, 0, nL*sizeof(int));
     
   /* calculating mean and number of non-na values */
@@ -555,8 +555,8 @@ void compute_sam2_stat_q(GENE_DATA *pdata, int *L, float *T, const void *extra)
   int ncol=pdata->ncol;
   float q=*(float *)extra;
   
-  assert(num=(float *)malloc(sizeof(float)*nrow));
-  assert(denum=(float *)malloc(sizeof(float)*nrow));
+  num=(float *)malloc(sizeof(float)*nrow);
+  denum=(float *)malloc(sizeof(float)*nrow);
   
   /* calculating mean and number of non-na values */
   for (i=0;i<nrow;i++) {
@@ -608,8 +608,8 @@ void compute_sam1_stat_q(GENE_DATA *pdata, int *L, float *T, const void *extra)
   int k=1;  
   float q=*(float *)extra;
   
-  assert(num=(float *)malloc(sizeof(float)*nrow));
-  assert(denum=(float *)malloc(sizeof(float)*nrow));
+  num=(float *)malloc(sizeof(float)*nrow);
+  denum=(float *)malloc(sizeof(float)*nrow);
 
   for (i=0;i<pdata->ncol;i++) {
     if (L[i]==-1) {
@@ -663,8 +663,8 @@ void compute_samm_stat_q(GENE_DATA *pdata, int *L, float *T, const void *extra)
   int nL=pdata->nL;
   float q=*(float *)extra;
   
-  assert(num=(float *)malloc(sizeof(float)*nrow));
-  assert(denum=(float *)malloc(sizeof(float)*nrow));
+  num=(float *)malloc(sizeof(float)*nrow);
+  denum=(float *)malloc(sizeof(float)*nrow);
 
   /* calculating mean and number of non-na values */
   for (i=0;i<nrow;i++) {
@@ -882,7 +882,7 @@ void compute_t_mod_stat(GENE_DATA *pdata, int *L, float *T, const void *extra)
   int nL=pdata->nL;
    
   create_tmod_data(&nrow, &tmod);
-  assert(s2_post=(float *)malloc(sizeof(float)*nrow));
+  s2_post=(float *)malloc(sizeof(float)*nrow);
   if(nL==1) t1_mod_stat_func(pdata, L, &tmod);
   else t2_mod_stat_func(pdata, L, &tmod);
     
@@ -933,12 +933,12 @@ void compute_f_mod_stat(GENE_DATA *pdata, int *L, float *T, const void *extra)
   int nL=pdata->nL;
   int *df_resid;
   
-  assert(sigma2=(float *)malloc(sizeof(float)*nrow));
-  assert(df_resid=(int *)malloc(sizeof(int)*nrow));
-  assert(s2_post=(float *)malloc(sizeof(float)*nrow));
-  assert(bss=(float *)malloc(sizeof(float)*nrow));
+  sigma2=(float *)malloc(sizeof(float)*nrow);
+  df_resid=(int *)malloc(sizeof(int)*nrow);
+  s2_post=(float *)malloc(sizeof(float)*nrow);
+  bss=(float *)malloc(sizeof(float)*nrow);
   memset(bss, 0, sizeof(float)*nrow);
-  assert(wss=(float *)malloc(sizeof(float)*nrow));
+  wss=(float *)malloc(sizeof(float)*nrow);
   memset(wss, 0, sizeof(float)*nrow);
   
   for (i=0;i<nrow;i++) {
@@ -1003,8 +1003,8 @@ void fitFDist(float *sigma2, int *df1, int n, float *scale, float *df2)
 {
   float *z, *e, emean=0, evar=0;
   int i, count=0;
-  assert(z=(float *)malloc(sizeof(float)*n));
-  assert(e=(float *)malloc(sizeof(float)*n));
+  z=(float *)malloc(sizeof(float)*n);
+  e=(float *)malloc(sizeof(float)*n);
   
   for(i=0;i<n;i++) {
      if((R_FINITE(sigma2[i]))&&(sigma2[i]>EPSILON)) {
@@ -1062,7 +1062,7 @@ float tmixture(float *t, int n, float *std, float *df, float proportion, float c
   int i, total=0, *dt, ntarget;
   float *n_t, *n_std, *n_df, res;
 
-  assert(dt=(int *)malloc(sizeof(int)*n));
+  dt=(int *)malloc(sizeof(int)*n);
 
   for(i=0;i<n;i++) {
     if(R_FINITE(t[i])) {
@@ -1071,9 +1071,9 @@ float tmixture(float *t, int n, float *std, float *df, float proportion, float c
      }
   }
   
-  assert(n_t=(float *)malloc(total*sizeof(float)));
-  assert(n_std=(float *)malloc(total*sizeof(float)));
-  assert(n_df=(float *)malloc(total*sizeof(float)));
+  n_t=(float *)malloc(total*sizeof(float));
+  n_std=(float *)malloc(total*sizeof(float));
+  n_df=(float *)malloc(total*sizeof(float));
   for(i=0;i<total;i++) {
     n_t[i]=t[dt[i]];
     n_std[i]=std[dt[i]];
@@ -1088,13 +1088,13 @@ float tmixture(float *t, int n, float *std, float *df, float proportion, float c
      double *p0, *ptarget;
      int *index;
 
-     assert(index=(int *)malloc(sizeof(int)*total));
-     assert(ttop=(float *)malloc(sizeof(float)*ntarget));
-     assert(c1=(float *)malloc(sizeof(float)*ntarget));
-     assert(df1=(float *)malloc(sizeof(float)*ntarget));
-     assert(p0=(double *)malloc(sizeof(double)*ntarget));
-     assert(ptarget=(double *)malloc(sizeof(double)*ntarget));
-     assert(c0=(float *)malloc(sizeof(float)*ntarget));
+     index=(int *)malloc(sizeof(int)*total);
+     ttop=(float *)malloc(sizeof(float)*ntarget);
+     c1=(float *)malloc(sizeof(float)*ntarget);
+     df1=(float *)malloc(sizeof(float)*ntarget);
+     p0=(double *)malloc(sizeof(double)*ntarget);
+     ptarget=(double *)malloc(sizeof(double)*ntarget);
+     c0=(float *)malloc(sizeof(float)*ntarget);
      memset(c0, 0, sizeof(float)*ntarget);
 
      for(i=0;i<total;i++) {
@@ -1171,11 +1171,11 @@ void compute_t_mod_B(GENE_DATA *pdata, int *L, float *B, const void *extra)
   int nrow=pdata->nrow;
   int nL=pdata->nL;
   
-  assert(df_total=(float *)malloc(sizeof(int)*nrow));
-  assert(s2_post=(float *)malloc(sizeof(float)*nrow));
-  assert(r=(float *)malloc(sizeof(float)*nrow));
-  assert(kernel=(float *)malloc(sizeof(float)*nrow));
-  assert(T=(float *)malloc(sizeof(float)*nrow));
+  df_total=(float *)malloc(sizeof(int)*nrow);
+  s2_post=(float *)malloc(sizeof(float)*nrow);
+  r=(float *)malloc(sizeof(float)*nrow);
+  kernel=(float *)malloc(sizeof(float)*nrow);
+  T=(float *)malloc(sizeof(float)*nrow);
   
   create_tmod_data(&nrow, &tmod);
   if(nL==1) t1_mod_stat_func(pdata, L, &tmod);

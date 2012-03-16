@@ -23,7 +23,7 @@ void get_deds_order(double *d, int *pnrow, int *pncol, int *L, char **options, f
   DEDS_RES dr;
   double *F;
 
-  assert(F=(double *)malloc(sizeof(double)*(*pnrow)));
+  F=(double *)malloc(sizeof(double)*(*pnrow));
 
   create_gene_data(d,pnrow,pncol,L,&data);
   if(type2test(options, &td, nT, nL, extras)==0) return;
@@ -94,26 +94,26 @@ void func_deds_quick(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   FUNC_SAMPLE func_next_sample=ptd->func_next_sample;
   float *extras;
   
-  assert(extras=(float *)malloc(nT*sizeof(float)));
+  extras=(float *)malloc(nT*sizeof(float));
   memcpy(extras, ptd->extras, nT*sizeof(float));
-  assert(bL=(int *)malloc(ncol*sizeof(int)));
-  assert(L=(int *)malloc(ncol*sizeof(int)));
+  bL=(int *)malloc(ncol*sizeof(int));
+  L=(int *)malloc(ncol*sizeof(int));
   memcpy(L, pdata->L, ncol*sizeof(int));
-  assert(T=(float **)malloc(sizeof(float*)*nrow));
+  T=(float **)malloc(sizeof(float*)*nrow);
   for (i=0;i<nrow;i++)  
-    assert(T[i]=(float *)malloc(sizeof(float)*nT));
-  assert(tmpT=(float *)malloc(sizeof(float)*nrow));
-  assert(bE=(float *)malloc(sizeof(float)*nT));
-  assert(E=(float *)malloc(sizeof(float)*nT));
-  assert(fF=(float *)malloc(sizeof(float)*nrow));
-  assert(bD=(float *)malloc(sizeof(float)*nrow));
+    T[i]=(float *)malloc(sizeof(float)*nT);
+  tmpT=(float *)malloc(sizeof(float)*nrow);
+  bE=(float *)malloc(sizeof(float)*nT);
+  E=(float *)malloc(sizeof(float)*nT);
+  fF=(float *)malloc(sizeof(float)*nrow);
+  bD=(float *)malloc(sizeof(float)*nrow);
   
-  assert(bMD=(float *)malloc(sizeof(float)*(nrow*(*B))));
-  assert(bT=(float ***)malloc(sizeof(float **)*(*B)));
+  bMD=(float *)malloc(sizeof(float)*(nrow*(*B)));
+  bT=(float ***)malloc(sizeof(float **)*(*B));
   for (i=0;i<(*B);i++) {
-    assert(bT[i]=(float **)malloc(sizeof(float *)*nrow));
+    bT[i]=(float **)malloc(sizeof(float *)*nrow);
     for (j=0;j<nrow;j++)
-      assert(bT[i][j]=(float *)malloc(sizeof(float)*nT));
+      bT[i][j]=(float *)malloc(sizeof(float)*nT);
   }
 
   /********************************************************/
@@ -227,18 +227,18 @@ void func_get_order(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   FUNC_SAMPLE func_next_sample=ptd->func_next_sample;
   float *extras;
   
-  assert(extras=(float *)malloc(nT*sizeof(float)));
+  extras=(float *)malloc(nT*sizeof(float));
   memcpy(extras, ptd->extras, nT*sizeof(float));
-  assert(bL=(int *)malloc(ncol*sizeof(int)));
-  assert(L=(int *)malloc(ncol*sizeof(int)));
+  bL=(int *)malloc(ncol*sizeof(int));
+  L=(int *)malloc(ncol*sizeof(int));
   memcpy(L, pdata->L, ncol*sizeof(int));
-  assert(tmpT=(float *)malloc(sizeof(float)*nrow));
-  assert(T=(float **)malloc(sizeof(float *)*nrow));
+  tmpT=(float *)malloc(sizeof(float)*nrow);
+  T=(float **)malloc(sizeof(float *)*nrow);
   for (i=0;i<nrow;i++)
-    assert(T[i]=(float *)malloc(sizeof(float)*nT));
-  assert(bE=(float *)malloc(sizeof(float)*nT));
-  assert(E=(float *)malloc(sizeof(float)*nT));
-  assert(D=(float *)malloc(sizeof(float)*nrow));
+    T[i]=(float *)malloc(sizeof(float)*nT);
+  bE=(float *)malloc(sizeof(float)*nT);
+  E=(float *)malloc(sizeof(float)*nT);
+  D=(float *)malloc(sizeof(float)*nrow);
    
   /********************************************************/
   /***   compute E by permutation                       ***/
@@ -329,19 +329,19 @@ void func_get_FDR(GENE_DATA *pdata, TEST_DATA *ptd, DEDS_RES *pdr, int *B)
   FUNC_COMPUTE_P func_compute_p=ptd->func_compute_p;
   float *extras;
   
-  assert(extras=(float *)malloc(nT*sizeof(float)));
+  extras=(float *)malloc(nT*sizeof(float));
   memcpy(extras, ptd->extras, nT*sizeof(float));
-  assert(L=(int *)malloc(sizeof(int)*ncol));
+  L=(int *)malloc(sizeof(int)*ncol);
   memcpy(L, pdata->L, sizeof(int)*ncol);
-  assert(bL=(int *)malloc(sizeof(int)*ncol));
-  assert(tmpT=(float *)malloc(sizeof(float)*(nrow)));
-  assert(bT=(float **)malloc(sizeof(float*)*nrow));
+  bL=(int *)malloc(sizeof(int)*ncol);
+  tmpT=(float *)malloc(sizeof(float)*(nrow));
+  bT=(float **)malloc(sizeof(float*)*nrow);
   for(i=0;i<nrow;i++)
-    assert(bT[i]=(float *)malloc(sizeof(float)*nT));
-  assert(fE=(float *)malloc(sizeof(float)*nT));
-  assert(fF=(float *)malloc(sizeof(float)*nrow));
-  assert(bD=(float *)malloc(sizeof(float)*nrow));
-  assert(bMD=(float *)malloc(sizeof(float)*(nrow*(*B))));
+    bT[i]=(float *)malloc(sizeof(float)*nT);
+  fE=(float *)malloc(sizeof(float)*nT);
+  fF=(float *)malloc(sizeof(float)*nrow);
+  bD=(float *)malloc(sizeof(float)*nrow);
+  bMD=(float *)malloc(sizeof(float)*(nrow*(*B)));
     
   creat_sampling(ncol, L, (*B));
   is_next=(*func_next_sample)(bL);
@@ -395,8 +395,8 @@ void print_b(int b, int B, char *prompt)
 int type2test(char **options, TEST_DATA *td, int *nT, int *nL, float *extras)
 {
   int i;
-  assert(td->stat_array=(FUNC_COMPUTE_STAT *)malloc((*nT)*sizeof(FUNC_COMPUTE_STAT)));
-  assert(td->extras=(float *)malloc((*nT)*sizeof(float)));
+  td->stat_array=(FUNC_COMPUTE_STAT *)malloc((*nT)*sizeof(FUNC_COMPUTE_STAT));
+  td->extras=(float *)malloc((*nT)*sizeof(float));
   
   if(*nL==1) Rprintf("\nOne-sample Statistics:\n");
   else if(*nL==2) Rprintf("\nTwo-sample Statistics:\n");
@@ -508,12 +508,12 @@ void calc_FDR(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, fl
   float **bMD, **count;
   int i, j, m;
     
-  assert(bMD=(float **)malloc(sizeof(float *)*(*pnrow)));
+  bMD=(float **)malloc(sizeof(float *)*(*pnrow));
   for(i=0;i<(*pnrow);i++)
-    assert(bMD[i]=(float *)malloc(sizeof(float)*(*pncol)));
-  assert(count=(float **)malloc(sizeof(float *)*(*nsig)));
+    bMD[i]=(float *)malloc(sizeof(float)*(*pncol));
+  count=(float **)malloc(sizeof(float *)*(*nsig));
   for(i=0;i<(*nsig);i++){
-    assert(count[i]=(float *)malloc(sizeof(float)*(*pncol)));
+    count[i]=(float *)malloc(sizeof(float)*(*pncol));
     memset(count[i], 0, sizeof(float)*(*pncol));
   }
 
@@ -575,12 +575,12 @@ void calc_adjP(float *bD, float *D, int *R, int *pnrow, int *pncol, int *nsig, f
   float **bMD, *Adj_P;
   int i, j, *count, *total;
     
-  assert(bMD=(float **)malloc(sizeof(float *)*(*pnrow)));
+  bMD=(float **)malloc(sizeof(float *)*(*pnrow));
   for(i=0;i<(*pnrow);i++)
-    assert(bMD[i]=(float *)malloc(sizeof(float)*(*pncol)));
-  assert(count=(int *)malloc(sizeof(int)*(*pnrow)));
-  assert(total=(int *)malloc(sizeof(int)*(*pnrow)));
-  assert(Adj_P=(float *)malloc(sizeof(float)*(*pnrow)));
+    bMD[i]=(float *)malloc(sizeof(float)*(*pncol));
+  count=(int *)malloc(sizeof(int)*(*pnrow));
+  total=(int *)malloc(sizeof(int)*(*pnrow));
+  Adj_P=(float *)malloc(sizeof(float)*(*pnrow));
   memset(count, 0, sizeof(int)*(*pnrow));
   memset(total, 0, sizeof(int)*(*pnrow));
 

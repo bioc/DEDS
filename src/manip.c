@@ -140,7 +140,7 @@ float median(float *X, int n)
   float *sX, m;
   int *dX;
   unsigned long total=0, i, k;
-  assert(dX=(int *)malloc(n*sizeof(int)));
+  dX=(int *)malloc(n*sizeof(int));
   
   for(i=0;i<n;i++) {
     if(R_FINITE(X[i])) {
@@ -150,7 +150,7 @@ float median(float *X, int n)
   }
   k=total/2;
 
-  assert(sX=(float *)malloc(total*sizeof(float)));
+  sX=(float *)malloc(total*sizeof(float));
   
   for(i=0;i<total;i++)   sX[i]=X[dX[i]];
  
@@ -166,11 +166,11 @@ void quantile(float *X, int nX, float *q, int nq, float *ret)
    double *index, *lo, *hi;
    int *dX;
    unsigned long total=0, i;
-   assert(dX=(int *)malloc(nX*sizeof(int)));
-   assert(index=(double *)malloc(nq*sizeof(double)));
-   assert(lo=(double *)malloc(nq*sizeof(double)));
-   assert(hi=(double *)malloc(nq*sizeof(double)));
-   assert(qX=(float *)malloc(nq*sizeof(float)));
+   dX=(int *)malloc(nX*sizeof(int));
+   index=(double *)malloc(nq*sizeof(double));
+   lo=(double *)malloc(nq*sizeof(double));
+   hi=(double *)malloc(nq*sizeof(double));
+   qX=(float *)malloc(nq*sizeof(float));
   
    /* total is number of finite data */
    for(i=0;i<nX;i++) {
@@ -180,7 +180,7 @@ void quantile(float *X, int nX, float *q, int nq, float *ret)
     }
    }
   
-   assert(sX=(float *)malloc(total*sizeof(float)));
+   sX=(float *)malloc(total*sizeof(float));
    for(i=0;i<total;i++) sX[i]=X[dX[i]];
    qsort(sX, total, sizeof(sX[0]), distCompare);
    
